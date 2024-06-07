@@ -1,0 +1,111 @@
+*{
+    scrollbar-width: none;
+}
+body {
+    color: #fff;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #111727;
+    
+}
+
+h1 {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+#filters {
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#filters label {
+    margin-right: 5px;
+}
+
+#filters select, #filters input {
+    padding: 5px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    color: #fff;
+    background-color: #111727;
+}
+
+#searchVideosBtn {
+    padding: 5px 10px;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    border-radius: 50px;
+    color: #fff;
+    background-color: #111727;
+}
+#searchVideosBtn:hover {
+    background-color: rgb(14, 156, 217);
+}
+#subjectfilter:hover {
+    background-color: rgb(14, 156, 217);
+}
+#yearfilter:hover {
+    background-color: rgb(14, 156, 217);
+}
+
+#videoContainer {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    align-items: flex-start;
+    justify-self: start;
+}
+
+.video {
+    display: grid;
+    gap: 9px;
+    grid-template-columns: repeat(3, 1fr);
+    width: 100%;
+}
+.thumbnail{
+    border: 20px solid white;
+    border-radius: 50px;
+}
+.thumbnail:hover{
+    margin: 0 50px 50px 50px;
+    margin: 0px auto;
+    border-radius: 10px;
+    box-shadow: 
+        0 0 10px #0ff, 
+        0 0 20px #0ff, 
+        0 0 30px #0ff, 
+        0 0 40px #0ff,
+        5px 5px 15px rgba(1, 250, 246, 0.5); /* Shadow for lifted effect */
+    transform: translateY(-10px); /* Lift box upwards */
+        
+
+}
+
+@media (min-width: 600px) {
+    #filters {
+        flex-direction: row;
+        justify-content: center;
+    }
+
+    #filters select, #filters input, #searchVideosBtn {
+        
+        width: auto;
+        max-width: none;
+    }
+
+    .video {
+        max-width:100%;
+    }
+    .thumbnail{
+        max-width:100%;
+        border: 1px solid white;
+    }
+}

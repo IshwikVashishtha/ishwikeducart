@@ -1,0 +1,43 @@
+
+<html>
+<head>
+    <title>Engineering Notes</title>
+    <link rel="stylesheet" href="Notes.css">
+</head>
+<body>
+    <div id="aktu">
+        <!-- <img src="https://upload.wikimedia.org/wikipedia/en/9/98/Dr._A.P.J._Abdul_Kalam_Technical_University_logo.png" alt=""> -->
+    </div>
+    <h1>Engineering Notes</h1>
+    <div class="filter-container">
+        <label class="filter-label">Filter by Subject:</label>
+        <select id="subject-filter" class="filter-input">
+            <option value="">All Subjects</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Physics">Physics</option>
+            <option value="Chemistry">Chemistry</option>
+            <option value="Programing for Problem Solving">Programing for Problem Solving</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Electronic Engineering">Electronic Engineering</option>
+            <option value="Environment and ecology">Environment and ecology</option>
+            <option value="Mechanical Engineering">Mechanical Engineering</option>
+            <option value="soft skill ">soft skill</option>
+        </select>
+        <label class="filter-label">Filter by Year:</label>
+        <select id="year-filter" class="filter-input">
+            <option value="">All Years</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+        </select>
+        <button id="apply-filter" class="filter-input">Apply Filter</button>
+    </div>
+    <ul id="note-list" class="note-list">
+        <!-- List of notes will be generated dynamically using JavaScript -->
+    </ul>
+    
+    
+    <script src="Notes.js"></script>
+</body>
+</html>

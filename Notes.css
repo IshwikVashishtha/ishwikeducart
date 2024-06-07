@@ -1,0 +1,96 @@
+*{
+    scrollbar-width: none;
+}
+body {
+    background-color: #111727;
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    color: #fff;
+    
+}
+.filter-container {
+    margin-bottom: 20px;
+}
+.filter-label {
+    margin-right: 10px;
+}
+.filter-input {
+    padding: 5px;
+    border: 1px solid #ccc;
+    background-color: #11172774;
+    border-radius: 50px;
+    color: #ffffff;
+}
+.note-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.note-list li {
+    padding: 10px;
+    border-bottom: 2px solid #fdfdfd;
+    width: 100%;
+}
+.note-list li:hover {
+    background-color: #00fff783;
+}
+.note-list li:last-child {
+    border-bottom: none;
+}
+#apply-filter{
+    padding: 5px 10px;
+    border-radius: 50px;
+    color: #fff;
+    background-color: #11172774;
+}
+.filter-input:hover{
+ 
+    background-color: #00fff783;
+}
+#apply-filter:hover{
+ 
+    background-color: #00fff783;
+}
+#aktu{
+    background-image:url(https://upload.wikimedia.org/wikipedia/en/9/98/Dr._A.P.J._Abdul_Kalam_Technical_University_logo.png) ;
+    background-size: 50%;
+    background-position: right;
+    background-repeat: no-repeat;
+    z-index: -1;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    /* mix-blend-mode: multiply; */
+}
+ img{
+    position: absolute;
+    mix-blend-mode: multiply;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    margin-top: 10px;
+
+}
+@media (max-width: 992px) {
+     .note-list li {
+         width: 80%;
+     }
+}
+@media (max-width: 768px) {
+    .note-list li {
+        width: 90%;
+    }
+}
+@media (max-width: 576px) {
+    img {
+        display: none;
+    }
+    .note-list li {
+        width: 100%;
+    }
+    
+}
