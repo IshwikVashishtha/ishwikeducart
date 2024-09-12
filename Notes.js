@@ -399,14 +399,14 @@ const notes = [
   //     description: "Notes on Organic Chemistry for 2nd semester students",
   //     pdfLink: "chemistry/organic_chemistry.pdf"
   // },
-  // {
-  //     id: 20,
-  //     subject: "Data Structures",
-  //     year: "2nd Year",
-  //     title: "Data Structures",
-  //     description: "Notes on Data Structures for 3rd semester students",
-  //     pdfLink: "cs/data_structures.pdf"
-  // },
+  {
+      id: 20,
+      subject: "Data Structures",
+      year: "2nd Year",
+      title: "Data Structures",
+      description: "Notes on Data Structures for all Unites",
+      pdfLink: "dsa/Data-structure.pdf"
+  },
   // {
   //     id: 21,
   //     subject: "Mathematics",
