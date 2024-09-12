@@ -400,11 +400,11 @@ const notes = [
   //     pdfLink: "chemistry/organic_chemistry.pdf"
   // },
   {
-      id: 46,
-      subject: "Data Structures",
+      id: 20,
+      subject: "data structures",
       year: "2nd Year",
-      title: "Data Structures",
-      description: "Notes on Data Structures for all Unites",
+      title: "data structures",
+      description: "Notes on data structures for all units",
       pdfLink: "dsa/Data-structure.pdf"
   },
   // {
