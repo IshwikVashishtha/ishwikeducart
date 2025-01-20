@@ -1,0 +1,317 @@
+[
+  {
+    "subject": "Mathematics",
+    "year": "1st Year",
+    "title": "Differential Calculus 1",
+    "description": "Notes of Differential Calculus 1 for 1st or 2nd semester students",
+    "pdfLink": "math/mth2.pdf"
+  },
+  {
+    "subject": "Physics",
+    "year": "1st Year",
+    "title": "Quantum Physics",
+    "description": "Notes on Quantum Physics for 1st or 2nd semester students",
+    "pdfLink": "physic/phy1.pdf"
+  },
+  {
+    "subject": "Chemistry",
+    "year": "1st Year",
+    "title": "UNIT 1 Notes",
+    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+    "pdfLink": "chemistry/che1.pdf"
+  },
+  {
+    "subject": "Programming for Problem Solving",
+    "year": "1st Year",
+    "title": "UNIT 1 Notes",
+    "description": "Notes on Data Structures for 2nd semester students",
+    "pdfLink": "pps/pps1.pdf"
+  },
+  {
+    "subject": "Electrical Engineering",
+    "year": "1st Year",
+    "title": "UNIT-1",
+    "description": "Notes on UNIT-1 for 1st or 2nd semester students",
+    "pdfLink": "BEE/ee1.pdf"
+  },
+  {
+    "subject": "Mechanical Engineering",
+    "year": "1st Year",
+    "title": "Introduction to Mechanics",
+    "description": "Notes on Thermodynamics for 5th semester students",
+    "pdfLink": "machanical/me1.pdf"
+  },
+  {
+    "subject": "Mechanical Engineering",
+    "year": "1st Year",
+    "title": "IC Engine and EVS",
+    "description": "Notes on IC Engine and EVS for 1st or 2nd semester students",
+    "pdfLink": "machanical/me2.pdf"
+  },
+  {
+    "subject": "Mathematics",
+    "year": "1st Year",
+    "title": "Matrix",
+    "description": "Notes on Matrix for 1st or 2nd semester students",
+    "pdfLink": "math/mth1.pdf"
+  },
+  {
+    "subject": "Mathematics",
+    "year": "1st Year",
+    "title": "Differential Calculus 2",
+    "description": "Notes on Differential Calculus 2 for 1st or 2nd semester students",
+    "pdfLink": "math/mth2.pdf"
+  },
+  {
+    "subject": "Mathematics",
+    "year": "1st Year",
+    "title": "Integral Calculus 1",
+    "description": "Notes on Integral Calculus 1 for 1st or 2nd semester students",
+    "pdfLink": "math/mth4.pdf"
+  },
+  {
+    "subject": "Mathematics",
+    "year": "1st Year",
+    "title": "Integral Calculus 2",
+    "description": "Notes on Integral Calculus 2 for 1st or 2nd semester students",
+    "pdfLink": "math/mth5.pdf"
+  },
+  {
+    "subject": "Physics",
+    "year": "1st Year",
+    "title": "Electromagnetic Field Theory",
+    "description": "Notes on Electromagnetic Field Theory for 1st or 2nd semester students",
+    "pdfLink": "physic/phy2.pdf"
+  },
+  {
+    "subject": "Physics",
+    "year": "1st Year",
+    "title": "Wave Optics",
+    "description": "Notes on Wave Optics for 1st or 2nd semester students",
+    "pdfLink": "physic/phy3.pdf"
+  },
+  {
+    "subject": "Physics",
+    "year": "1st Year",
+    "title": "Fibre Optics and Laser",
+    "description": "Notes on Fibre Optics and Laser for 1st or 2nd semester students",
+    "pdfLink": "physic/phy4.pdf"
+  },
+  {
+    "subject": "Physics",
+    "year": "1st Year",
+    "title": "Superconductor and Nano Materials",
+    "description": "Notes on Superconductor and Nano Materials for 1st or 2nd semester students",
+    "pdfLink": "physic/phy5.pdf"
+  },
+  {
+    "subject": "Chemistry",
+    "year": "1st Year",
+    "title": "UNIT 2 Notes",
+    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+    "pdfLink": "chemistry/che2.pdf"
+  },
+  {
+    "subject": "Chemistry",
+    "year": "1st Year",
+    "title": "UNIT 3 Notes",
+    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+    "pdfLink": "chemistry/che3.pdf"
+  },
+  {
+    "subject": "Chemistry",
+    "year": "1st Year",
+    "title": "UNIT 4 Notes",
+    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+    "pdfLink": "chemistry/che4.pdf"
+  },
+  {
+    "subject": "Chemistry",
+    "year": "1st Year",
+    "title": "UNIT 5 Notes",
+    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+    "pdfLink": "chemistry/che5.pdf"
+  },
+  {
+    "subject": "Mechanical Engineering",
+    "year": "1st Year",
+    "title": "Refrigeration and AC",
+    "description": "Notes on Refrigeration and AC for 1st or 2nd semester students",
+    "pdfLink": "machanical/me3.pdf"
+  },
+  {
+    "subject": "Mechanical Engineering",
+    "year": "1st Year",
+    "title": "Fluid Mechanics",
+    "description": "Notes on Fluid Mechanics for 1st or 2nd semester students",
+    "pdfLink": "machanical/me4.pdf"
+  },
+  {
+    "subject": "Mechanical Engineering",
+    "year": "1st Year",
+    "title": "Measurements",
+    "description": "Notes on Measurements for 1st or 2nd semester students",
+    "pdfLink": "machanical/me5.pdf"
+  },
+  {
+    "subject": "Environment and Ecology",
+    "year": "1st Year",
+    "title": "UNIT 1",
+    "description": "Notes for UNIT 1 for 1st or 2nd semester students",
+    "pdfLink": "Environment/evs1.pdf"
+  },
+  {
+    "subject": "Environment and Ecology",
+    "year": "1st Year",
+    "title": "UNIT 2",
+    "description": "Notes for UNIT 2 for 1st or 2nd semester students",
+    "pdfLink": "Environment/evs2.pdf"
+  },
+  {
+    "subject": "Environment and Ecology",
+    "year": "1st Year",
+    "title": "UNIT 3",
+    "description": "Notes for UNIT 3 for 1st or 2nd semester students",
+    "pdfLink": "Environment/evs3.pdf"
+  },
+  {
+    "subject": "Environment and Ecology",
+    "year": "1st Year",
+    "title": "UNIT 4",
+    "description": "Notes for UNIT 4 for 1st or 2nd semester students",
+    "pdfLink": "Environment/evs4.pdf"
+  },
+  {
+    "subject": "Environment and Ecology",
+    "year": "1st Year",
+    "title": "UNIT 5",
+    "description": "Notes for UNIT 5 for 1st or 2nd semester students",
+    "pdfLink": "Environment/evs5.pdf"
+  },
+  {
+    "subject": "Electrical Engineering",
+    "year": "1st Year",
+    "title": "UNIT-2",
+    "description": "Notes on UNIT-2 for 1st or 2nd semester students",
+    "pdfLink": "BEE/ee2.pdf"
+  },
+  {
+    "subject": "Electrical Engineering",
+    "year": "1st Year",
+    "title": "UNIT-3",
+    "description": "Notes on UNIT-3 for 1st or 2nd semester students",
+    "pdfLink": "BEE/ee3.pdf"
+  },
+  {
+    "subject": "Electrical Engineering",
+    "year": "1st Year",
+    "title": "UNIT-4",
+    "description": "Notes on UNIT-4 for 1st or 2nd semester students",
+    "pdfLink": "BEE/ee4.pdf"
+  },
+  {
+    "subject": "Electrical Engineering",
+    "year": "1st Year",
+    "title": "UNIT-5",
+    "description": "Notes on UNIT-5 for 1st or 2nd semester students",
+    "pdfLink": "BEE/ee5.pdf"
+  },
+  {
+    "subject": "Programming for Problem Solving",
+    "year": "1st Year",
+    "title": "UNIT 2 Notes",
+    "description": "Notes on UNIT 2 for 1st or 2nd semester students",
+    "pdfLink": "pps/pps2.pdf"
+  },
+  {
+    "subject": "Programming for Problem Solving",
+    "year": "1st Year",
+    "title": "UNIT 3 Notes",
+    "description": "Notes on UNIT 3 for 1st or 2nd semester students",
+    "pdfLink": "pps/pps3.pdf"
+  },
+  {
+    "subject": "Programming for Problem Solving",
+    "year": "1st Year",
+    "title": "UNIT 4 Notes",
+    "description": "Notes on UNIT 4 for 1st or 2nd semester students",
+    "pdfLink": "pps/pps4.pdf"
+  },
+  {
+    "subject": "Programming for Problem Solving",
+    "year": "1st Year",
+    "title": "UNIT 5 Notes",
+    "description": "Notes on UNIT 5 for 1st or 2nd semester students",
+    "pdfLink": "pps/pps5.pdf"
+  },
+  {
+    "subject": "Electronic Engineering",
+    "year": "1st Year",
+    "title": "UNIT 1 Notes",
+    "description": "Notes on UNIT 1 for 1st or 2nd semester students",
+    "pdfLink": "fee/ec1.pdf"
+  },
+  {
+    "subject": "Electronic Engineering",
+    "year": "1st Year",
+    "title": "UNIT 2 Notes",
+    "description": "Notes on UNIT 2 for 1st or 2nd semester students",
+    "pdfLink": "fee/ec2.pdf"
+  },
+  {
+    "subject": "Electronic Engineering",
+    "year": "1st Year",
+    "title": "UNIT 3 Notes",
+    "description": "Notes on UNIT 3 for 1st or 2nd semester students",
+    "pdfLink": "fee/ec3.pdf"
+  },
+  {
+    "subject": "Electronic Engineering",
+    "year": "1st Year",
+    "title": "UNIT 4 Notes",
+    "description": "Notes on UNIT 4 for 1st or 2nd semester students",
+    "pdfLink": "fee/ec4.pdf"
+  },
+  {
+    "subject": "Electronic Engineering",
+    "year": "1st Year",
+    "title": "UNIT 5 Notes",
+    "description": "Notes on UNIT 5 for 1st or 2nd semester students",
+    "pdfLink": "fee/ec5.pdf"
+  },
+  {
+    "subject": "Soft Skill",
+    "year": "1st Year",
+    "title": "UNIT 1 Notes",
+    "description": "Notes on UNIT 1 for 1st or 2nd semester students",
+    "pdfLink": "softkill/ss1.pdf"
+  },
+  {
+    "subject": "Soft Skill",
+    "year": "1st Year",
+    "title": "UNIT 2 Notes",
+    "description": "Notes on UNIT 2 for 1st or 2nd semester students",
+    "pdfLink": "softkill/ss2.pdf"
+  },
+  {
+    "subject": "Soft Skill",
+    "year": "1st Year",
+    "title": "UNIT 3 Notes",
+    "description": "Notes on UNIT 3 for 1st or 2nd semester students",
+    "pdfLink": "softkill/ss3.pdf"
+  },
+  {
+    "subject": "Soft Skill",
+    "year": "1st Year",
+    "title": "UNIT 4 Notes",
+    "description": "Notes on UNIT 4 for 1st or 2nd semester students",
+    "pdfLink": "softkill/ss4.pdf"
+  },
+  {
+    "subject": "Soft Skill",
+    "year": "1st Year",
+    "title": "UNIT 5 Notes",
+    "description": "Notes on UNIT 5 for 1st or 2nd semester students",
+    "pdfLink": "softkill/ss5.pdf"
+  }
+]
