@@ -6,7 +6,7 @@ body {
     font-family: Arial, sans-serif;
     margin: 20px;
     color: #ffffff;
-    
+
 }
 header {
     /* position: sticky; */
@@ -17,39 +17,8 @@ header {
     width: 100%;
     z-index: 1000;
   }
-  
-  nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  
-  nav ul {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
-  }
-  
-  nav ul li {
-    margin-right: 1rem;
-  }
-  
-  nav ul li a {
-    color: #ffffff;
-    font-weight: 900;
-    text-decoration: none;
-  }
-  
-  nav ul li a:hover {
-    color: #fffefe;
-    border: 1px solid rgb(6, 6, 6);
-    padding: 0.5rem;
-    border-radius: 50px;
-    background-color: #000707;
-  }
+
+
   img{
 
     position: fixed;

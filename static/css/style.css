@@ -5,7 +5,7 @@
     scrollbar-width: none;
   }
   
-  body {
+body {
     height: 100vh;
     width: 100%;
     font-family: Arial, sans-serif;
@@ -14,52 +14,18 @@
     flex-direction: column;
   }
   
-  header {
+header {
     position: sticky;
     top: 0;
-    background-color: #000000;
-    color: #fff;
     padding: 1rem;
     width: 100%;
     z-index: 1000;
-  }
+}
    
   
-  nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  
-  nav ul {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
-  }
-  
-  nav ul li {
-    margin-right: 1rem;
-  }
-  
-  nav ul li a {
-    color: #fff;
-    font-weight: 900;
-    text-decoration: none;
-  }
-  
-  nav ul li a:hover {
-    color: #070707;
-    border: 1px solid rgb(6, 6, 6);
-    padding: 0.5rem;
-    border-radius: 50px;
-    background-color: #ffffff;
-  }
-  
-  main {
-    position: relative;
+
+main {
+    position: absulate;
     flex: 1;
     display: flex;
     justify-content: center;
@@ -96,15 +62,21 @@
   
  
   
-  footer {
+  .footer-container {
     width: 100%;
-    background-color: #000000;
+    background: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
     color: #fff;
     display: flex;
     flex-direction: row;
-    justify-content: space-evenly;
+    justify-content: space-around;
     align-items: center;
-  }
+    backdrop-filter: blur(10px); /* Blur effect */
+    padding: 20px; /* Optional padding for better spacing */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
   
   .footer-links {
     display: flex;

@@ -3,8 +3,7 @@ import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from pymongo import MongoClient
-from pymongo.collection import Collection
-from pymongo.database import Database
+
 # access your MongoDB Atlas cluster
 load_dotenv()
 connection_string = os.getenv("CONNECTION_STRING")
@@ -19,6 +18,7 @@ users = collection1.find()
 
 
 app = Flask(__name__)
+
 # function to generate the list of all the notes.e
 def list_of_notes():
     documents = collection2.find()
@@ -28,11 +28,13 @@ def list_of_notes():
     return Notes
 
 # function to filter notes according to the user.
+@app.route('/filter_notes', methods=['GET'])
 def filter_notes():
+    Notes = list_of_notes()
     subject = request.args.get('subject')
     year = request.args.get('year')
 
-    filtered_notes = [note for note in notes if
+    filtered_notes = [note for note in Notes if
                       (subject == "" or note['subject'] == subject) and
                       (year == "" or note['year'] == year)]
 

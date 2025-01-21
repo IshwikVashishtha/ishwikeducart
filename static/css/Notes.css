@@ -4,52 +4,21 @@
 body {
     background-color: #040404;
     font-family: Arial, sans-serif;
-    margin: 20px;
     color: #ffffff;
     
 }
 header {
     /* position: sticky; */
     top: 0;
-    background-color: #00000000;
-    color: #ffffffcd;
-    padding: 1rem;
     width: 100%;
     z-index: 1000;
   }
-  
-  nav {
-    max-width: 1200px;
-    margin: 0 auto;
-    width: 100%;
-  }
-  
-  nav ul {
-    list-style-type: none;
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
-  }
-  
-  nav ul li {
-    margin-right: 1rem;
-  }
-  
-  nav ul li a {
-    color: #ffffff;
-    font-weight: 900;
-    text-decoration: none;
-  }
-  
-  nav ul li a:hover {
-    color: #fffefe;
-    border: 1px solid rgb(6, 6, 6);
-    padding: 0.5rem;
-    border-radius: 50px;
-    background-color: #000707;
-  }
+
+.form-select{
+    background:transparent;
+    border-radius:50px
+
+}
 .filter-container {
     margin-bottom: 20px;
 }
@@ -63,21 +32,20 @@ header {
     border-radius: 50px;
     color: #ffffff;
 }
-.note-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+.card:hover{
+     background-color: #5d00f8;
+     margin: 50px 0px 50px 50px;
+     margin: 0px auto;
+     box-shadow:
+        0 0 10px rgb(1, 58, 58),
+        0 0 20px rgb(1, 58, 58),
+        0 0 30px rgb(1, 58, 58),
+        0 0 40px rgb(1, 58, 58),
+        5px 5px 15px rgba(1, 250, 246, 0.5); /* Shadow for lifted effect */
+     transform: translateY(-10px); /* Lift box upwards */
 }
-.note-list li {
-    padding: 10px;
-    border-bottom: 2px solid #fdfdfd;
-    width: 100%;
-}
-.note-list li:hover {
-    background-color: #00000083;
-}
-.note-list li:last-child {
-    border-bottom: none;
+ul{
+   list-style-type: none;
 }
 #apply-filter{
     padding: 5px 10px;
@@ -85,17 +53,14 @@ header {
     color: #fff;
     background-color: #000000f2;
 }
-.filter-input:hover{
- 
+#filter-input:hover{
     background-color: #00070783;
 }
 #apply-filter:hover{
- 
-    background-color: #000b0b83;
+    background-color: #332efb;
 }
 
 img{
-
     position: fixed;
     /* mix-blend-mode: multiply; */
     top: 0;
@@ -105,28 +70,6 @@ img{
     z-index: -1;
 
 }
-
-@media (max-width: 992px) {
-     .note-list li {
-         width: 80%;
-     }
-}
-@media (max-width: 768px) {
-    .note-list li {
-        width: 90%;
-    }
-}
-@media (max-width: 576px) {
-    img {
-        display: none;
-    }
-    .note-list li {
-        width: 100%;
-    }
-    
-}
-
-
 
 
 /* From Uiverse.io by alexmaracinaru */ 
