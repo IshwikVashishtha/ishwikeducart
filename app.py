@@ -1,5 +1,7 @@
 # import bson
 import os
+from wsgiref.validate import check_input
+
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import login_user
@@ -86,13 +88,27 @@ def register():
         else:
             hashed_password = generate_password_hash(user_password, salt_length=5)
             insert_user(user_email, hashed_password)
-            flash('Registration successful. You can now log in.', 'success')
-            return redirect(url_for('login'))
+            message = flash('Registration successful. You can now log in.', 'success')
+            return redirect(url_for('login' ,  messages = message))
     return render_template("register.html")
 
 @app.route('/login' , methods=['GET', 'POST'])
 def login():
-    
+    if request.method == 'POST':
+        user_email = request.form.get('email')
+        user_password = request.form.get('password')
+        # Check if the username and password match
+        checking_user = users_collection.find_one({'email': user_email})
+        hashed_password = checking_user['password']
+        print(hashed_password)
+        user = check_password_hash(hashed_password , password=user_password)
+        if user:
+            flash('Login successful.', 'success')
+            # login_user(user)
+            return redirect(url_for("index"))
+            # Add any additional logic, such as session management
+        else:
+            flash('Invalid email or password. Please try again.', 'danger')
     return render_template("login.html")
 
 @app.route('/log-out')
