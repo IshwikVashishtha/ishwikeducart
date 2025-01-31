@@ -1,68 +1,65 @@
 # import bson
 import os
-from wsgiref.validate import check_input
-
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash
-from flask_login import login_user
+from flask_login import login_user, LoginManager, current_user, logout_user, UserMixin, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from pymongo import MongoClient
 
-# access your MongoDB Atlas cluster
+# Load environment variables
 load_dotenv()
 connection_string = os.getenv("CONNECTION_STRING")
 client = MongoClient(connection_string)
 
-# add in your database and collection from Atlas
+# Access the database and collections
 db = client['test']
 users_collection = db['users']
-collection2 = db['notes']
+notes_collection = db['notes']
 
-users = users_collection.find()
-def insert_note(subject , year,title ,description , file):
-    collection2.insert_one(
-        {
-            "subject": subject,
-            "year": year,
-            "title": title,
-            "description": description,
-            "pdfLink": file
-        }
-    )
+# Function to insert a new note
+def insert_note(subject, year, title, description, file):
+    notes_collection.insert_one({
+        "subject": subject,
+        "year": year,
+        "title": title,
+        "description": description,
+        "pdfLink": file
+    })
 
-def insert_user(email , password):
-    users_collection.insert_one(
-        {
-            "email": email,
-            "password": password
-        }
-    )
+# Function to insert a new user
+def insert_user(email, password):
+    users_collection.insert_one({
+        "email": email,
+        "password": password
+    })
 
-
-# function to generate the list of all the notes.e
+# Function to generate the list of all notes
 def list_of_notes():
-    documents = collection2.find()
-    Notes = []
-    for note in documents:
-        Notes.append(note)
-    return Notes
+    return list(notes_collection.find())
 
-
+# Flask app setup
 app = Flask(__name__)
 app.secret_key = "8BYkEfBA6O6donzWlSihBXox7C0sKR6b"
 
-# function to filter notes according to the user.
-@app.route('/filter_notes', methods=['GET'])
-def filter_notes():
-    Notes = list_of_notes()
-    subject = request.args.get('subject')
-    year = request.args.get('year')
+# Flask-Login setup
+login_manager = LoginManager()
+login_manager.init_app(app)
 
-    filtered_notes = [note for note in Notes if
-                      (subject == "" or note['subject'] == subject) and
-                      (year == "" or note['year'] == year)]
+# User class for Flask-Login
+class User(UserMixin):
+    def __init__(self, user_data):
+        self.id = user_data['email']
+        self.user_data = user_data
 
-    return render_template("notes.html" , Notes=filtered_notes)
+# User loader for Flask-Login
+@login_manager.user_loader
+def load_user(email):
+    user_data = users_collection.find_one({'email': email})
+    if user_data:
+        return User(user_data)
+    return None
+
+
 
 # initial Home page
 @app.route('/')
@@ -98,22 +95,34 @@ def login():
         user_email = request.form.get('email')
         user_password = request.form.get('password')
         # Check if the username and password match
-        checking_user = users_collection.find_one({'email': user_email})
-        hashed_password = checking_user['password']
-        print(hashed_password)
-        user = check_password_hash(hashed_password , password=user_password)
-        if user:
+        user_data = users_collection.find_one({'email': user_email})
+        if user_data and check_password_hash(user_data['password'], user_password):
+            user = User(user_data)
+            login_user(user)
             flash('Login successful.', 'success')
-            # login_user(user)
-            return redirect(url_for("index"))
-            # Add any additional logic, such as session management
+            return redirect(url_for('index'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
     return render_template("login.html")
 
 @app.route('/log-out')
 def logout():
-    return render_template("index.html")
+    logout_user()
+    flash('You have been logged out.', 'success')
+    return redirect(url_for("index"))
+
+# function to filter notes according to the user.
+@app.route('/filter_notes', methods=['GET'])
+def filter_notes():
+    Notes = list_of_notes()
+    subject = request.args.get('subject')
+    year = request.args.get('year')
+
+    filtered_notes = [note for note in Notes if
+                      (subject == "" or note['subject'] == subject) and
+                      (year == "" or note['year'] == year)]
+
+    return render_template("notes.html" , Notes=filtered_notes)
 
 
 if __name__ == "__main__":

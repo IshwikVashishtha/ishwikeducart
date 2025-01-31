@@ -63,6 +63,7 @@
                 >Resourse</a
               >
             </li>
+            {% if not current_user.is_authenticated: %}
               <li class="nav-item">
               <a class="nav-link px-lg-3 py-3 py-lg-4"
                  href="{{ url_for('login') }}"
@@ -73,6 +74,13 @@
                  href="{{ url_for('register') }}"
               >Register</a>
             </li>
+            {% else: %}
+            <li class="nav-item">
+              <a class="nav-link px-lg-3 py-3 py-lg-4"
+                 href="{{ url_for('logout') }}"
+              >Logout</a>
+            </li>
+            {% endif %}
           </ul>
         </div>
       </div>
