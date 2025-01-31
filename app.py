@@ -17,6 +17,8 @@ users_collection = db['users']
 notes_collection = db['notes']
 
 # Function to insert a new note
+
+@login_required
 def insert_note(subject, year, title, description, file):
     notes_collection.insert_one({
         "subject": subject,
@@ -27,8 +29,9 @@ def insert_note(subject, year, title, description, file):
     })
 
 # Function to insert a new user
-def insert_user(email, password):
+def insert_user(email, password , username="username"):
     users_collection.insert_one({
+        "username":username,
         "email": email,
         "password": password
     })
@@ -39,7 +42,7 @@ def list_of_notes():
 
 # Flask app setup
 app = Flask(__name__)
-app.secret_key = "8BYkEfBA6O6donzWlSihBXox7C0sKR6b"
+app.secret_key = os.getenv("SECRET_KEY")
 
 # Flask-Login setup
 login_manager = LoginManager()
@@ -62,6 +65,13 @@ def load_user(email):
 
 
 # initial Home page
+
+@app.route('/profile_page')
+@login_required
+def userprofile():
+    
+    return render_template("profile_page.html" , notes = list_of_notes())
+
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -73,6 +83,8 @@ def notes():
 @app.route('/resources')
 def resources():
     return render_template("resources.html")
+
+
 
 @app.route('/register' , methods=['GET', 'POST'])
 def register():
@@ -100,7 +112,7 @@ def login():
             user = User(user_data)
             login_user(user)
             flash('Login successful.', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('login'))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
     return render_template("login.html")
