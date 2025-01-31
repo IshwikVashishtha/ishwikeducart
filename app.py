@@ -1,4 +1,4 @@
-import bson
+# import bson
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for
@@ -15,7 +15,7 @@ collection1 = db['users']
 collection2 = db['notes']
 
 users = collection1.find()
-def inser_notes(subject , year,title ,description , file):
+def inser_note(subject , year,title ,description , file):
     collection2.insert_one(
         {
             "subject": subject,
@@ -65,28 +65,17 @@ def notes():
 def resources():
     return render_template("resources.html")
 
-@app.route('/user-profile')
-def userprofile():
-    return render_template("userProfile.html")
+@app.route('/register')
+def register():
+    return render_template("register.html")
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login')
 def login():
-    if request.method == 'POST':
-        # Access form data
-        email = request.form.get('email')
-        password = request.form.get('password')
-        # Here, you can add your authentication logic
-        # For example, validate the credentials against a database
-        if email == 'testmail@gmail.com' and password == 'testpassword':
-            # Successful login logic
-            return redirect(url_for('userprofile' , username= password))
-        else:
-            # Failed login logic
-            error = 'Invalid username or password'
-            return render_template('login.html', error=error)
-    else:
-        # Render the login page
-        return render_template('login.html')
+    return render_template("login.html")
+
+@app.route('/log-out')
+def logout():
+    return render_template("index.html")
 
 
 if __name__ == "__main__":

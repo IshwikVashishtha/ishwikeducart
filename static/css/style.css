@@ -17,7 +17,7 @@ body {
 header {
     position: sticky;
     top: 0;
-    padding: 1rem;
+
     width: 100%;
     z-index: 1000;
 }
@@ -37,17 +37,24 @@ main {
   }
   
   main .content {
+    margin-top:4.5rem;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
     z-index: 1;
     max-width: 800px;
     width: 100%;
   }
-  img{
-    top: 0;
-    left: 0;
-    object-fit: cover;
-    position: fixed;
-    z-index: -1;
-  }
+  img {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw; /* Set the width to 100% of the viewport */
+  height: 100vh; /* Set the height to 100% of the viewport */
+  object-fit: cover; /* Ensures the image covers the entire element without distortion */
+  z-index: -1;
+}
   
   .content h1 {
     font-size: 45px;
@@ -82,7 +89,7 @@ main {
     display: flex;
     justify-content: center;
     flex-wrap: wrap;
-    margin-bottom: 1rem;
+
   }
   
   .footer-links a {

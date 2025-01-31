@@ -23,7 +23,6 @@
 </head>
 <body>
     <img src="https://images.pexels.com/photos/207700/pexels-photo-207700.jpeg?cs=srgb&dl=pexels-pixabay-207700.jpg&fm=jpg" alt="">
-
     <div class="container">
         <header>
     <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
@@ -64,29 +63,15 @@
                 >Resourse</a
               >
             </li>
-            <!-- Only show Login/Register if user is logged out. Otherwise show "Log Out" -->
-
-            <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('userprofile') }}"
-                >Login</a
-              >
+              <li class="nav-item">
+              <a class="nav-link px-lg-3 py-3 py-lg-4"
+                 href="{{ url_for('login') }}"
+              >Login</a>
             </li>
             <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('index') }}"
-                >Register</a
-              >
-            </li>
-
-            <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('index') }}"
-                >Log Out</a
-              >
+              <a class="nav-link px-lg-3 py-3 py-lg-4"
+                 href="{{ url_for('register') }}"
+              >Register</a>
             </li>
           </ul>
         </div>
