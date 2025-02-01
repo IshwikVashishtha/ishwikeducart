@@ -29,16 +29,24 @@ def insert_note(subject, year, title, description, file):
     })
 
 # Function to insert a new user
-def insert_user(email, password , username="username"):
+def insert_user(email, password , notes = [""] , username="username", bio="tell about your self" ):
     users_collection.insert_one({
+        "bio":bio,
         "username":username,
         "email": email,
-        "password": password
+        "password": password,
+        "user_notes":notes
     })
 
 # Function to generate the list of all notes
 def list_of_notes():
     return list(notes_collection.find())
+
+def editprofile(username ,  bio):
+    pass
+
+
+
 
 # Flask app setup
 app = Flask(__name__)
@@ -51,6 +59,7 @@ login_manager.init_app(app)
 # User class for Flask-Login
 class User(UserMixin):
     def __init__(self, user_data):
+        self.username = user_data['username']
         self.id = user_data['email']
         self.user_data = user_data
 
@@ -64,13 +73,16 @@ def load_user(email):
 
 
 
+
+
+
 # initial Home page
 
-@app.route('/profile_page')
+@app.route('/profile_page/<user_id>')
 @login_required
-def userprofile():
-    
-    return render_template("profile_page.html" , notes = list_of_notes())
+def userprofile(user_id):
+    requested_user = users_collection.find_one({"username" : user_id})
+    return render_template("profile_page.html"  , username=user_id , bio= requested_user['bio'])
 
 @app.route('/')
 def index():
@@ -82,7 +94,7 @@ def notes():
 
 @app.route('/resources')
 def resources():
-    return render_template("resources.html")
+    return render_template("resources.html" )
 
 
 
@@ -112,7 +124,7 @@ def login():
             user = User(user_data)
             login_user(user)
             flash('Login successful.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('userprofile', user_id=user_data['username']))
         else:
             flash('Invalid email or password. Please try again.', 'danger')
     return render_template("login.html")
