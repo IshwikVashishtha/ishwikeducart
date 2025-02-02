@@ -8,58 +8,109 @@
 </head>
 <body >
 <header>
-    <nav class="bg-gray-900 bg-opacity-90 text-white backdrop-blur-lg h-24" id="mainNav">
-        <div class="container mx-auto px-4 flex justify-between items-center h-full">
-            <a class="text-xl font-bold" href="/">Ishwik's EDUCART</a>
-            <button
-                class="block lg:hidden text-white focus:outline-none"
-                type="button"
-                aria-controls="navbarResponsive"
-                aria-expanded="false"
-                aria-label="Toggle navigation"
-            >
-                <i class="fas fa-bars"></i>
-            </button>
-            <div class="hidden lg:flex lg:items-center lg:space-x-4" id="navbarResponsive">
-                <ul class="flex flex-col lg:flex-row lg:space-x-4">
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('index') }}"
-                        >Home</a>
+    <nav class="bg-gray-900 text-gray-100 shadow-lg" id="mainNav">
+        <div class="container mx-auto px-4">
+            <div class="flex justify-between items-center h-20">
+                <!-- Brand/Logo -->
+                <a href="/" class="text-2xl font-bold text-indigo-400 hover:text-indigo-300 transition-colors duration-300">
+                    Ishwik's EDUCART
+                </a>
+
+                <!-- Mobile Menu Button -->
+                <button
+                    class="lg:hidden p-2 rounded-md text-gray-300 hover:text-indigo-400 hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    onclick="toggleMobileMenu()"
+                >
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex space-x-8">
+                    <ul class="flex space-x-8">
+                        <li>
+                            <a href="{{ url_for('index') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Home
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('notes') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Notes
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('resources') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Resources
+                            </a>
+                        </li>
+                        {% if not current_user.is_authenticated %}
+                        <li>
+                            <a href="{{ url_for('login') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Login
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('register') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Register
+                            </a>
+                        </li>
+                        {% else %}
+                        <li>
+                            <a href="{{ url_for('logout') }}" class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                                Logout
+                            </a>
+                        </li>
+<!--                        <li>-->
+<!--                            <a href="{{ url_for('userprofile', user_id=current_user['username']) }}"-->
+<!--                               class="text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">-->
+<!--                                User-->
+<!--                            </a>-->
+<!--                        </li>-->
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Mobile Menu (Hidden by default) -->
+            <div class="lg:hidden hidden sm:unhidden" id="mobile-menu">
+                <ul class="flex flex-col space-y-4 pb-4">
+                    <li>
+                        <a href="{{ url_for('index') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Home
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('notes') }}"
-                        >Notes</a>
+                    <li>
+                        <a href="{{ url_for('notes') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Notes
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('resources') }}"
-                        >Resources</a>
+                    <li>
+                        <a href="{{ url_for('resources') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Resources
+                        </a>
                     </li>
-                    {% if not current_user.is_authenticated: %}
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('login') }}"
-                        >Login</a>
+                    {% if not current_user.is_authenticated %}
+                    <li>
+                        <a href="{{ url_for('login') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Login
+                        </a>
                     </li>
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('register') }}"
-                        >Register</a>
+                    <li>
+                        <a href="{{ url_for('register') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Register
+                        </a>
                     </li>
-                    {% else: %}
-                    <li class="nav-item">
-                        <a
-                            class="block py-2 lg:py-0 lg:px-4 hover:text-blue-400"
-                            href="{{ url_for('logout') }}"
-                        >Log Out</a>
+                    {% else %}
+                    <li>
+                        <a href="{{ url_for('logout') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
+                            Logout
+                        </a>
                     </li>
+<!--                    <li>-->
+<!--                        <a href="{{ url_for('userprofile', user_id=current_user['username']) }}"-->
+<!--                           class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">-->
+<!--                            User-->
+<!--                        </a>-->
+<!--                    </li>-->
                     {% endif %}
                 </ul>
             </div>

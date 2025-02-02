@@ -128,12 +128,12 @@
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card bg-transparent rounded-5 border border-primary h-100 text-light">
                     <div class="card-body">
-                        <h3 class="card-title">{{ note['subject'] }}</h3>
-                        <h5 class="card-subtitle mb-2 ">{{ note['title'] }}</h5>
-                        <h6 class="card-title"><strong>Year:</strong> {{ note['year'] }}</h6>
-                        <p class="card-text text-body-primary">{{ note['description'] }}</p>
+                        <h3 class="card-title">{{ note.subject }}</h3>
+                        <h5 class="card-subtitle mb-2 ">{{ note.title }}</h5>
+                        <h6 class="card-title"><strong>Year:</strong> {{ note.year }}</h6>
+                        <p class="card-text text-body-primary">{{ note.description }}</p>
                        <button>
-                           <a href="{{ note['pdfLink'] }}" download class="btn">
+                           <a href="{{ note.pdfLink }}" download class="btn">
                             Download
                             <svg width="34" height="34" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <circle cx="37" cy="37" r="35.5" stroke="black" stroke-width="3"></circle>
