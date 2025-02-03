@@ -71,7 +71,7 @@
             </div>
 
             <!-- Mobile Menu (Hidden by default) -->
-            <div class="lg:hidden hidden sm:unhidden" id="mobile-menu">
+            <div class="lg:hidden hidden" id="mobile-menu">
                 <ul class="flex flex-col space-y-4 pb-4">
                     <li>
                         <a href="{{ url_for('index') }}" class="block text-gray-300 hover:text-indigo-400 transition-colors duration-300 py-2 px-4">
@@ -117,3 +117,9 @@
         </div>
     </nav>
 </header>
+<script>
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobile-menu');
+        mobileMenu.classList.toggle('hidden');
+    }
+</script>
