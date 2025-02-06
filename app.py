@@ -108,7 +108,7 @@ def upload_note():
 
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            unique_filename = f"{current_user.id}_{int(datetime.utcnow().timestamp())}_{filename}"
+            unique_filename = f"{current_user.id}{int(datetime.utcnow().timestamp())}_{filename}"
             file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
             file.save(file_path)
 
@@ -237,6 +237,12 @@ def filter_notes():
 
     return render_template("notes.html", Notes=filtered_notes)
 
+@app.route('/delete/<note_id>')
+def delete(note_id):
+    note_id = ObjectId(note_id)
+    notes_collection.delete_one({"_id":note_id})
+    return redirect(url_for("userprofile" , user_id= current_user.username))
 
+    pass
 if __name__ == "__main__":
     app.run(debug=True)

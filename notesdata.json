@@ -1,39 +1,39 @@
 [
-  {
-    "subject": "Mathematics",
-    "year": "1st Year",
-    "title": "Differential Calculus 1",
-    "description": "Notes of Differential Calculus 1 for 1st or 2nd semester students",
-    "pdfLink": "math/mth2.pdf"
-  },
-  {
-    "subject": "Physics",
-    "year": "1st Year",
-    "title": "Quantum Physics",
-    "description": "Notes on Quantum Physics for 1st or 2nd semester students",
-    "pdfLink": "physic/phy1.pdf"
-  },
-  {
-    "subject": "Chemistry",
-    "year": "1st Year",
-    "title": "UNIT 1 Notes",
-    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
-    "pdfLink": "chemistry/che1.pdf"
-  },
-  {
-    "subject": "Programming for Problem Solving",
-    "year": "1st Year",
-    "title": "UNIT 1 Notes",
-    "description": "Notes on Data Structures for 2nd semester students",
-    "pdfLink": "pps/pps1.pdf"
-  },
-  {
-    "subject": "Electrical Engineering",
-    "year": "1st Year",
-    "title": "UNIT-1",
-    "description": "Notes on UNIT-1 for 1st or 2nd semester students",
-    "pdfLink": "BEE/ee1.pdf"
-  },
+//  {
+//    "subject": "Mathematics",
+//    "year": "1st Year",
+//    "title": "Differential Calculus 1",
+//    "description": "Notes of Differential Calculus 1 for 1st or 2nd semester students",
+//    "pdfLink": "math/mth2.pdf"
+//  },
+//  {
+//    "subject": "Physics",
+//    "year": "1st Year",
+//    "title": "Quantum Physics",
+//    "description": "Notes on Quantum Physics for 1st or 2nd semester students",
+//    "pdfLink": "physic/phy1.pdf"
+//  },
+//  {
+//    "subject": "Chemistry",
+//    "year": "1st Year",
+//    "title": "UNIT 1 Notes",
+//    "description": "Notes on Organic Chemistry for 1st or 2nd semester students",
+//    "pdfLink": "chemistry/che1.pdf"
+//  },
+//  {
+//    "subject": "Programming for Problem Solving",
+//    "year": "1st Year",
+//    "title": "UNIT 1 Notes",
+//    "description": "Notes on Data Structures for 2nd semester students",
+//    "pdfLink": "pps/pps1.pdf"
+//  },
+//  {
+//    "subject": "Electrical Engineering",
+//    "year": "1st Year",
+//    "title": "UNIT-1",
+//    "description": "Notes on UNIT-1 for 1st or 2nd semester students",
+//    "pdfLink": "BEE/ee1.pdf"
+//  },
   {
     "subject": "Mechanical Engineering",
     "year": "1st Year",
