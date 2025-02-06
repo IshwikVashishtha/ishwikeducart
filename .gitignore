@@ -1,4 +1,6 @@
 uploads
+notesdata.json
+.gitignore
 .env
 .DS_Store
 posts.db

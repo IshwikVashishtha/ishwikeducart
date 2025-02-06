@@ -40,7 +40,7 @@ def allowed_file(filename):
 def insert_note(subject, year, title, description, filename):
     notes_collection.insert_one({
         "subject": subject,
-        "year": year,
+        "year": f"{year} year",
         "title": title,
         "description": description,
         "pdfLink": filename,
