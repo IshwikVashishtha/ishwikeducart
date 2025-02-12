@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+         * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            background: #f0f2f5;
+        }
+
+        .left {
+            flex: 1;
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .left-content {
+            color: white;
+            text-align: center;
+        }
+
+        .left-content h1 {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .right {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 480px;
+            width: 100%;
+        }
+
+        .otp-heading {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .otp-heading h2 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .otp-heading p {
+            color: #6b7280;
+        }
+
+        #otp-form {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        #otp-form input {
+            width: 80px;
+            height: 80px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        #otp-form input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .verify-button {
+            width: 100%;
+            margin-top: 2rem;
+            padding: 1rem;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .verify-button:hover {
+            background: #4f46e5;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .left {
+                padding: 4rem 2rem;
+            }
+
+            .left-content h1 {
+                font-size: 3rem;
+            }
+
+            #otp-form input {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            #otp-form input {
+                width: 50px;
+                height: 50px;
+                font-size: 1.25rem;
+            }
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('#otp-form input');
+            const form = document.getElementById('otp-form');
+
+            // Auto-focus and move between inputs
+            inputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    if (e.target.value.length === 1 && index < inputs.length - 1) {
+                        inputs[index + 1].focus();
+                    }
+                });
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && index > 0 && !e.target.value) {
+                        inputs[index - 1].focus();
+                    }
+                });
+            });
+
+            // Handle form submission
+            document.querySelector('.verify-button').addEventListener('click', function() {
+                let otp = '';
+                inputs.forEach(input => {
+                    otp += input.value;
+                });
+
+                // Create hidden input for complete OTP
+                const hiddenInput = document.createElement('input');
+                hiddenInput.type = 'hidden';
+                hiddenInput.name = 'otp';
+                hiddenInput.value = otp;
+                form.appendChild(hiddenInput);
+
+                form.submit();
+            });
+        });
+    </script>
+</head>
+<body>
+    <section class="left">
+        <div class="left-content">
+            <h1>OTP VERIFICATION</h1>
+            <p>Please enter the verification code sent to {{ email if email else 'your email' }}</p>
+        </div>
+    </section>
+
+    <section class="right">
+        <div class="container">
+            <div class="otp-heading">
+                <h2>Enter Verification Code</h2>
+                <p>We've sent a 4-digit code to your email</p>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+            </div>
+            <form id="otp-form" action="{{ url_for('verify_email') }}" method="POST">
+                <input type="text" name="digit1" maxlength="1" autofocus pattern="\d" required>
+                <input type="text" name="digit2" maxlength="1" pattern="\d" required>
+                <input type="text" name="digit3" maxlength="1" pattern="\d" required>
+                <input type="text" name="digit4" maxlength="1" pattern="\d" required>
+                <input type="hidden" name="email" value="{{ email }}">
+            </form>
+            <button type="submit" class="verify-button">Verify Code</button>
+            <p class="text-center mt-4 text-gray-600">
+                Didn't receive code? <a href="{{ url_for('resend_otp') }}" class="text-indigo-600">Resend Code</a>
+            </p>
+        </div>
+    </section>
+</body>
+</html>

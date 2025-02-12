@@ -1,12 +1,16 @@
+import random
 from bson import ObjectId
 import os
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
-from flask_login import login_user, LoginManager, current_user, logout_user, UserMixin, login_required
+from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
 from pymongo import MongoClient
 from datetime import datetime
+from user import User
+from itsdangerous import URLSafeTimedSerializer
+from flask_mail import Mail , Message
 
 # Load environment variables
 load_dotenv()
@@ -23,6 +27,17 @@ app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
 app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
 
+# Flask-Mail configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USERNAME'] = os.getenv("EMAIL")
+app.config['MAIL_PASSWORD'] = os.getenv("APP_PASSWORD")
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv("EMAIL")
+
+mail = Mail(app)
+s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+
 # Create uploads directory if not exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -32,9 +47,18 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 
+def send_verification_email(email):
+    token = s.dumps(email, salt='email-confirm')
+    confirm_url = url_for('confirm_email', token=token, _external=True)
+    subject = "Please confirm your email"
+    body = f'Click the link to confirm your email: {confirm_url}'
+
+    msg = Message(subject, recipients=[email], body=body)
+    mail.send(msg)
+
+
 def allowed_file(filename):
-    return '.' in filename and \
-        filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
 
 def insert_note(subject, year, title, description, filename):
@@ -63,18 +87,6 @@ def insert_user(email, password, username, bio="Tell about yourself", notes=None
 
 def list_of_notes():
     return list(notes_collection.find())
-
-
-class User(UserMixin):
-    def __init__(self, user_data):
-        self.id = str(user_data['_id'])
-        self.username = user_data.get('username', '')
-        self.email = user_data.get('email')
-        self.user_data = user_data
-
-    def get_id(self):
-        return str(self.id)
-
 
 @login_manager.user_loader
 def load_user(id):
@@ -189,17 +201,27 @@ def register():
         user_password = request.form.get('password')
         username = request.form.get('username')
 
+        # Check existing users
         if users_collection.find_one({'email': user_email}):
             flash('Email already exists. Choose a different one.', 'danger')
         elif users_collection.find_one({'username': username}):
             flash('Username already exists. Choose a different one.', 'danger')
         else:
-            hashed_password = generate_password_hash(user_password, salt_length=5)
-            insert_user(user_email, hashed_password, username)
-            flash('Registration successful. You can now log in.', 'success')
+            hashed_password = generate_password_hash(user_password)
+            users_collection.insert_one({
+                'email': user_email,
+                'username': username,
+                'password': hashed_password,
+                'is_verified': False,
+                'bio': 'Tell about yourself',
+                'user_notes': [],
+                'created_at': datetime.utcnow()
+            })
+
+            send_verification_email(user_email)
+            flash('A confirmation email has been sent. Please check your inbox.', 'success')
             return redirect(url_for('login'))
     return render_template("register.html")
-
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -208,22 +230,43 @@ def login():
         user_password = request.form.get('password')
         user_data = users_collection.find_one({'email': user_email})
 
-        if user_data and check_password_hash(user_data['password'], user_password):
-            user = User(user_data)
-            login_user(user)
-            flash('Login successful.', 'success')
-            return redirect(url_for('userprofile', user_id=user_data['username']))
+        if user_data:
+            if not user_data.get('is_verified', False):
+                flash('Please verify your email before logging in.', 'danger')
+                return redirect(url_for('login'))
+
+            if check_password_hash(user_data['password'], user_password):
+                user = User(user_data)
+                login_user(user)
+                flash('Login successful.', 'success')
+                return redirect(url_for('userprofile', user_id=user_data['username']))
+            else:
+                flash('Invalid email or password.', 'danger')
         else:
-            flash('Invalid email or password. Please try again.', 'danger')
+            flash('Invalid email or password.', 'danger')
     return render_template("login.html")
 
-
-@app.route('/log-out')
+@app.route('/logout')
 def logout():
     logout_user()
     flash('You have been logged out.', 'success')
     return redirect(url_for("index"))
 
+
+@app.route('/confirm/<token>')
+def confirm_email(token):
+    try:
+        email = s.loads(token, salt='email-confirm', max_age=300)
+        user = users_collection.find_one({'email': email})
+        if user and not user.get('is_verified', False):
+            users_collection.update_one({'email': email}, {'$set': {'is_verified': True}})
+            flash("Your email has been verified!", "success")
+    except:
+        flash("The confirmation link is invalid or has expired.", "danger")
+    return redirect(url_for('login'))
+
+def re_send_mail():
+    return render_template('register.html')
 
 @app.route('/filter_notes', methods=['GET'])
 def filter_notes():
