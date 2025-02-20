@@ -14,52 +14,6 @@ header {
     z-index: 1000;
   }
 
-.form-select{
-    background:transparent;
-    border-radius:50px
-
-}
-.filter-container {
-    margin-bottom: 20px;
-}
-.filter-label {
-    margin-right: 10px;
-}
-.filter-input {
-    padding: 5px;
-    border: 1px solid #000000;
-    background-color: #00000074;
-    border-radius: 50px;
-    color: #ffffff;
-}
-.card:hover{
-     background-color: #5d00f8;
-     margin: 50px 0px 50px 50px;
-     margin: 0px auto;
-     box-shadow:
-        0 0 10px rgb(1, 58, 58),
-        0 0 20px rgb(1, 58, 58),
-        0 0 30px rgb(1, 58, 58),
-        0 0 40px rgb(1, 58, 58),
-        5px 5px 15px rgba(1, 250, 246, 0.5); /* Shadow for lifted effect */
-     transform: translateY(-10px); /* Lift box upwards */
-}
-ul{
-   list-style-type: none;
-}
-#apply-filter{
-    padding: 5px 10px;
-    border-radius: 50px;
-    color: #fff;
-    background-color: #000000f2;
-}
-#filter-input:hover{
-    background-color: #00070783;
-}
-#apply-filter:hover{
-    background-color: #332efb;
-}
-
 img{
     position: fixed;
     /* mix-blend-mode: multiply; */
@@ -71,38 +25,3 @@ img{
 
 }
 
-
-/* From Uiverse.io by alexmaracinaru */ 
-button {
-    cursor: pointer;
-    font-weight: 700;
-    font-family: Helvetica,"sans-serif";
-    transition: all .2s;
-    padding: 10px 20px;
-    border-radius: 100px;
-    background: #cfef00;
-    border: 1px solid transparent;
-    display: flex;
-    align-items: center;
-    font-size: 15px;
-  }
-  
-  button:hover {
-    background: #c4e201;
-  }
-  
-  button > svg {
-    width: 34px;
-    margin-left: 10px;
-    transition: transform .3s ease-in-out;
-  }
-  
-  button:hover svg {
-    transform: translateX(5px);
-  }
-  
-  button:active {
-    transform: scale(0.95);
-  }
-  
-  

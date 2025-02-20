@@ -1,111 +1,101 @@
-{% include 'header.html'%}
-    <!-- Main Container -->
-    <div class="max-w-4xl mx-auto px-4 py-8 h-full">
-        <!-- Profile Header -->
-        <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
-            <!-- Profile Picture -->
-            <div class="relative group">
-                <img src="https://via.placeholder.com/150"
-                     alt="Profile"
-                     class="w-32 h-32 rounded-full border-4 border-white shadow-lg">
-                <button class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full hover:bg-blue-600 transition">
-                    <i class="fas fa-camera"> add</i>
+{% extends 'header.html'%}
+{% block title %}profile_page {% endblock %}
+{% block content %}
+<!-- Main Container -->
+<div class="max-w-6xl mx-auto px-4 py-8 min-h-screen bg-gray-100 text-gray-800">
+    <!-- Profile Header -->
+    <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
+        <!-- Profile Picture -->
+        <div class="relative group">
+            <img src="https://via.placeholder.com/150"
+                 alt="Profile"
+                 class="w-32 h-32 rounded-full border-4 border-blue-300 shadow-lg">
+            <button class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
+                <i class="fas fa-camera">add</i>
+            </button>
+        </div>
+
+        <!-- Profile Info -->
+        <div class="flex-1">
+            <div class="flex items-center gap-4 mb-4">
+                <h1 class="text-2xl font-bold text-gray-900">{{ username }}</h1>
+                {% if current_user.username == username%}
+                <button type="submit" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
+                        id="editProfileBtn">
+                    Edit Profile
                 </button>
-            </div>
-
-            <!-- Profile Info -->
-            <div class="flex-1">
-                <div class="flex items-center gap-4 mb-4">
-                    <h1 class="text-2xl font-bold" value="username">{{username}}</h1>
-                    <button type="submit" class="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300 transition"
-                            id="editProfileBtn">
-                        Edit Profile
-                    </button>
-                    <!-- Add Upload Note Button -->
-                    <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                            id="uploadNoteBtn">
-                        Upload Note
-                    </button>
-                </div>
-
-                <!-- Stats -->
-                <div class="flex gap-8 mb-4">
-                    <div class="text-center">
-                        <span class="font-bold">{{ notes|length }}</span>
-                        <span class="text-gray-600">Notes</span>
-                    </div>
-<!--                    <div class="text-center">-->
-<!--                        <span class="font-bold">15</span>-->
-<!--                        <span class="text-gray-600">Lectures</span>-->
-<!--                    </div>-->
-<!--                    <div class="text-center">-->
-<!--                        <span class="font-bold">1.2k</span>-->
-<!--                        <span class="text-gray-600">Followers</span>-->
-<!--                    </div>-->
-                </div>
-
-                <!-- Bio -->
-                <p class="text-gray-600 text-wrap">
-                    {{bio}}
-                </p>
-            </div>
-        </div>
-
-        <!-- Content Tabs -->
-        <div class="border-b mb-8">
-            <div class="flex justify-center space-x-8">
-                <button class="py-2 px-4 border-b-2 border-blue-500 font-medium">
-                    Notes
+                <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+                        id="uploadNoteBtn">
+                    Upload Note
                 </button>
-<!--                <button class="py-2 px-4 text-gray-500 hover:text-black transition">-->
-<!--                    Lectures-->
-<!--                </button>-->
+                {% endif %}
             </div>
-        </div>
 
-        <!-- Content Grid -->
-        <div class="grid grid-cols-1 md:grijjjd-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Note Card Example -->
-            {% for note in notes %}
-            <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition">
-                <div class="p-4">
-                    <h3 class="font-bold mb-2">{{ note.title }}</h3>
-                    <p class="text-gray-600 text-sm mb-4 text-wrap text-wrap">
-                        {{ note.description }}
-                    </p>
-                    <div class="flex justify-between text-xs text-gray-500 font-bold">
-                        <span>Subject: {{ note.subject }}</span>
-                        <span>Year: {{ note.year }}</span>
-                    </div>
-                    <div class="flex justify-between text-xs text-gray-500 mt-2">
-                        <span>Created: {{ note.created_at.strftime('%Y-%m-%d') if note.created_at else 'N/A' }}</span>
-                        <div class="flex gap-2">
-                            {% if note.pdfLink %}
-                            <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
-                               class="text-blue-500 hover:text-blue-600"
-                               >
-                                <i class="fas fa-download">Download</i>
-                            </a>
-                            {% endif %}
-                            {% if current_user.id == note.user_id %}
-                            <a href="{{ url_for('delete', note_id=note['_id']) }}">
-                                <button class="text-red-500 hover:text-red-600">
-                                    <i class="fas fa-trash"> Delet</i>
-                                </button>
-                            </a>
-                            {% endif %}
-                        </div>
-                    </div>
+            <!-- Stats -->
+            <div class="flex gap-8 mb-4">
+                <div class="text-center">
+                    <span class="font-bold text-gray-900">{{ notes|length }}</span>
+                    <span class="text-gray-600">Notes</span>
+                </div>
+                <div class="text-center">
+                    <span class="font-bold text-gray-900">{{ user_profile.points }}</span>
+                    <span class="text-gray-600">Points</span>
+                </div>
+                <div class="text-center">
+                    <span class="font-bold text-gray-900">{{ user_profile.followers|length }}</span>
+                    <span class="text-gray-600">Followers</span>
+                </div>
+                <div class="text-center">
+                    <span class="font-bold text-gray-900">{{ user_profile.following|length }}</span>
+                    <span class="text-gray-600">Following</span>
                 </div>
             </div>
-            {% else %}
-            <div class="col-span-full text-center text-gray-500">
-                No notes found.
-            </div>
-            {% endfor %}
-        </div>
 
-        <!-- Edit Profile Modal -->
+            <!-- Bio -->
+            <p class="text-gray-700">
+                {{ bio }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {% for note in notes %}
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 border border-gray-200">
+            <h3 class="font-bold text-gray-900 mb-2">{{ note.title }}</h3>
+            <p class="text-gray-700 text-sm mb-4">
+                {{ note.description }}
+            </p>
+            <div class="flex justify-between text-xs text-gray-600 font-bold">
+                <span>Subject: {{ note.subject | upper }}</span>
+                <span>Year: {{ note.year }}</span>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                <span>Created: {{ note.created_at.strftime('%Y-%m-%d') if note.created_at else 'N/A' }}</span>
+                <div class="flex gap-2">
+                    {% if note.pdfLink %}
+                    <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
+                       class="text-blue-600 hover:text-blue-700">
+                        <i class="fas fa-download">Download</i>
+                    </a>
+                    {% endif %}
+                    {% if current_user.id == note.user_id %}
+                    <a href="{{ url_for('delete', note_id=note['_id']) }}">
+                        <button class="text-red-500 hover:text-red-600">
+                            <i class="fas fa-trash"> Delete</i>
+                        </button>
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-span-full text-center text-gray-500">
+            No notes found.
+        </div>
+        {% endfor %}
+    </div>
+</div>
         <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="editModal">
             <div class="flex items-center justify-center min-h-screen">
                 <div class="bg-white rounded-lg p-6 w-96">
@@ -197,35 +187,26 @@
         </div>
     </div>
 
-    <script>
-        // Modal handling
-        const editModal = document.getElementById('editModal');
-        const uploadNoteModal = document.getElementById('uploadNoteModal');
 
-        document.getElementById('editProfileBtn').addEventListener('click', () => {
-            editModal.classList.remove('hidden');
-        });
+<script>
+    // Modal handling
+    const editModal = document.getElementById('editModal');
+    const uploadNoteModal = document.getElementById('uploadNoteModal');
 
-        document.getElementById('cancelEditBtn').addEventListener('click', () => {
-            editModal.classList.add('hidden');
-        });
+    document.getElementById('cancelEditBtn').addEventListener('click' , () => {
+         editModal.classList.add('hidden')
+    })
 
-        document.getElementById('uploadNoteBtn').addEventListener('click', () => {
-            uploadNoteModal.classList.remove('hidden');
-        });
+    document.getElementById('cancelUploadBtn').addEventListener('click' , () => {
+         uploadNoteModal.classList.add('hidden')
+    })
 
-        document.getElementById('cancelUploadBtn').addEventListener('click', () => {
-            uploadNoteModal.classList.add('hidden');
-        });
+    document.getElementById('editProfileBtn').addEventListener('click', () => {
+        editModal.classList.remove('hidden');
+    });
 
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            if (event.target == editModal) {
-                editModal.classList.add('hidden');
-            }
-            if (event.target == uploadNoteModal) {
-                uploadNoteModal.classList.add('hidden');
-            }
-        }
-    </script>
-{% include 'footer.html' %}
+    document.getElementById('uploadNoteBtn').addEventListener('click', () => {
+        uploadNoteModal.classList.remove('hidden');
+    });
+</script>
+{% endblock %}

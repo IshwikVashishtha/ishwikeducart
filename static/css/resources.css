@@ -82,6 +82,7 @@ h1 {
     gap: 9px;
     grid-template-columns: repeat(3, 1fr);
     width: 100%;
+
 }
 .thumbnail{
     border: 20px solid white;

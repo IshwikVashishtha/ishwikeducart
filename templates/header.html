@@ -4,15 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <title>Educart</title>
+    <title>{% block title %}{% endblock %}Educart</title>
 </head>
 <body >
 <header>
-    <nav class="bg-gray-900 text-gray-100 shadow-lg" id="mainNav">
+    <nav class="bg-black text-gray-100 shadow-lg" id="mainNav">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center h-20">
                 <!-- Brand/Logo -->
-                <a href="/" class="text-2xl font-bold text-indigo-400 hover:text-indigo-300 transition-colors duration-300">
+                <a href="{{url_for('index')}}" class="text-2xl font-bold text-indigo-400 hover:text-indigo-300 transition-colors duration-300">
                     Ishwik's EDUCART
                 </a>
 
@@ -117,9 +117,49 @@
         </div>
     </nav>
 </header>
+{% block content %}{% endblock %}
 <script>
     function toggleMobileMenu() {
         const mobileMenu = document.getElementById('mobile-menu');
         mobileMenu.classList.toggle('hidden');
     }
 </script>
+<!--<footer class="absolute bottom-0 border-t bg-white z-1">-->
+<!--  <div class="container px-4 px-lg-5">-->
+<!--      <div class="row gx-4 gx-lg-5 justify-content-center">-->
+<!--          <div class="col-md-10 col-lg-8 col-xl-7">-->
+<!--              <ul class="list-inline text-center">-->
+<!--                  <li class="list-inline-item">-->
+<!--                      <a href="#!">-->
+<!--                          <span class="fa-stack fa-lg">-->
+<!--                              <i class="fas fa-circle fa-stack-2x"></i>-->
+<!--                              <i class="fab fa-twitter fa-stack-1x fa-inverse"></i>-->
+<!--                          </span>-->
+<!--                      </a>-->
+<!--                  </li>-->
+<!--                  <li class="list-inline-item">-->
+<!--                      <a href="https://www.instagram.com/ishwik_/" target="_blank">-->
+<!--                        <span class="fa-stack fa-lg">-->
+<!--                            <i class="fas fa-circle fa-stack-2x"></i>-->
+<!--                            <i class="fab fa-instagram fa-stack-1x fa-inverse"></i>-->
+<!--                          </span>-->
+<!--                          -->
+<!--                      </a>-->
+<!--                  </li>-->
+<!--                  <li class="list-inline-item">-->
+<!--                      <a href="https://github.com/IshwikVashishtha" target="_blank">-->
+<!--                          <span class="fa-stack fa-lg">-->
+<!--                              <i class="fas fa-circle fa-stack-2x"></i>-->
+<!--                              <i class="fab fa-github fa-stack-1x fa-inverse"></i>-->
+<!--                          </span>-->
+<!--                      </a>-->
+<!--                  </li>-->
+<!--              </ul>-->
+<!--              <div class="small text-center text-muted fst-italic">Copyright &copy; Your Website 2025</div>-->
+<!--          </div>-->
+<!--      </div>-->
+<!--  </div>-->
+<!--</footer>-->
+<!--    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>-->
+</body>
+</html>

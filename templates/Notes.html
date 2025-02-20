@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Engineering Notes</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link href="{{ url_for('static', filename='css/Notes.css') }}" rel="stylesheet">
     <style>
@@ -25,7 +26,7 @@
     <img src="https://images.pexels.com/photos/207700/pexels-photo-207700.jpeg?cs=srgb&dl=pexels-pixabay-207700.jpg&fm=jpg" alt="">
     <div class="container">
         <header>
-    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
+            <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
       <div class="container px-4 px-lg-5">
         <a class="navbar-brand" href="/">Ishwik's EDUCART</a>
         <button
@@ -90,64 +91,119 @@
         </div>
       </div>
     </nav>
-</header>
+        </header>
         <h1 class="mt-4">Engineering Notes</h1>
-        <form action="{{ url_for('filter_notes') }}" method="GET" class="row g-3 mt-3">
-            <div class="col-md-6">
-                <label for="subject-filter" class="form-label">Filter by Subject:</label>
-                <select id="subject-filter" name="subject" class="form-select btn btn-primary">
-                    <option value="">All Subjects</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="Programming for Problem Solving">Programming for Problem Solving</option>
-                    <option value="Electrical Engineering">Electrical Engineering</option>
-                    <option value="Electronic Engineering">Electronic Engineering</option>
-                    <option value="Environment and Ecology">Environment and Ecology</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Soft Skill">Soft Skill</option>
-                    <option value="Data Structures">Data Structures</option>
-                </select>
-            </div>
-            <div class="col-md-6">
-                <label for="year-filter" class="form-label">Filter by Year:</label>
-                <select id="year-filter" name="year" class="form-select btn btn-primary">
-                    <option value="">All Years</option>
-                    <option value="1 year">1st Year</option>
-                    <option value="2 year">2nd Year</option>
-                    <option value="3 year">3rd Year</option>
-                    <option value="4 year">4th Year</option>
-                </select>
-            </div>
-            <div class="col-12">
-                <button type="submit" id="apply-filter" class="btn btn-primary">Apply Filter</button>
-            </div>
+        <form action="{{ url_for('filter_notes') }}" method="GET" class="flex flex-col md:flex-row mt-7">
+         <!-- Search by Subject -->
+          <div class="relative md:w-1/2">
+            <input
+              type="text"
+              id="myInput"
+              name="subject"
+              onkeyup="filterSuggestions()"
+              placeholder="Search for subject..."
+              title="Type in a subject"
+              class="w-full rounded-full bg-transparent border border-blue-700 px-4 py-2 text-white placeholder-gray-300 focus:outline-none"
+            />
+            <!-- Suggestion list: hidden by default -->
+            <ul id="suggestions" class="absolute left-0 right-0 mt-1 hidden list-none bg-black border border-gray-700 rounded-lg z-10">
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Mathematics</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Physics</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Chemistry</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Programming for Problem Solving</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Electrical Engineering</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Electronic Engineering</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Environment and Ecology</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Mechanical Engineering</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Soft Skill</a></li>
+              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Data Structures</a></li>
+            </ul>
+          </div>
+          <!-- Submit Button -->
+          <button type="submit" id="apply-filter" class="px-6 py-2 rounded-full text-white bg-[#000000f2] hover:bg-[#332efb] transition-colors">
+            Apply Filter
+          </button>
         </form>
-<div class="row mt-4">
-    {% for note in Notes %}
-    <div class="col-lg-4 col-md-6 mb-4">
-        <div class="card bg-transparent rounded-5 border border-primary h-100 text-light">
-            <div class="card-body">
-                <h3 class="card-title">{{ note.subject }}</h3>
-                <h5 class="card-subtitle mb-2"><strong>Title:</strong>{{ note.title }}</h5>
-                <h6 class="card-title"><strong>Year:</strong> {{ note.year }}</h6>
-                <p class="card-text text-body-primary">{{ note.description }}</p>
-                <!-- Download Button -->
-                <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
-                   download="{{ note.title }}.pdf"
-                   class="btn btn-primary">
-                    Download
-                    <svg width="34" height="34" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="37" cy="37" r="35.5" stroke="black" stroke-width="3"></circle>
-                        <path d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z" fill="black"></path>
-                    </svg>
-                </a>
+
+
+        <div class="row mt-4">
+            {% for note in Notes %}
+            <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card bg-transparent rounded-5 border border-primary h-100 text-light">
+                    <div class="card-body">
+                        <h3 class="card-title">{{ note.subject | upper }}</h3>
+                        <h5 class="card-subtitle mb-2"><strong>Title:</strong>{{ note.title }}</h5>
+                        <h6 class="card-title"><strong>Year:</strong> {{ note.year }}</h6>
+                        <p class="card-text text-body-primary">{{ note.description }}</p>
+                        <!-- Download Button -->
+                        <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
+                           download="{{ note.title }}.pdf"
+                           class="inline-flex items-center px-6 py-2 rounded-full text-white bg-black bg-opacity-90 hover:bg-indigo-600 transition-colors">
+                          Download
+                          <svg class="w-8 h-8 ml-2 transition-transform transform hover:translate-x-1" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="37" cy="37" r="35.5" stroke="white" stroke-width="3"></circle>
+                            <path d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z" fill="black"></path>
+                          </svg>
+                        </a>
+                    </div>
+                </div>
             </div>
+            {% endfor %}
         </div>
-    </div>
-    {% endfor %}
-</div>
-    </div>
+            </div>
+ <script>
+  function filterSuggestions() {
+    const input = document.getElementById('myInput');
+    const filter = input.value.toUpperCase();
+    const ul = document.getElementById('suggestions');
+    const li = ul.getElementsByTagName('li');
+    let hasVisible = false;
+
+    // If the input is empty, hide suggestions immediately.
+    if (filter === "") {
+      ul.classList.add("hidden");
+      return;
+    }
+
+    // Loop through each suggestion and display only matching items.
+    for (let i = 0; i < li.length; i++) {
+      const a = li[i].getElementsByTagName('a')[0];
+      const txtValue = a.textContent || a.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        li[i].classList.remove("hidden");
+        hasVisible = true;
+      } else {
+        li[i].classList.add("hidden");
+      }
+    }
+
+    // Show the suggestion list if there is at least one match.
+    if (hasVisible) {
+      ul.classList.remove("hidden");
+    } else {
+      ul.classList.add("hidden");
+    }
+  }
+
+  // Use event delegation to handle suggestion clicks.
+  document.getElementById('suggestions').addEventListener('click', function(e) {
+    if (e.target && e.target.nodeName === "A") {
+      e.preventDefault();  // Prevent the default anchor action.
+      document.getElementById('myInput').value = e.target.textContent;
+      document.getElementById('suggestions').classList.add("hidden");
+    }
+  });
+
+  // Optionally, hide suggestions when clicking outside the input or suggestion list.
+  document.addEventListener('click', function(e) {
+    const input = document.getElementById('myInput');
+    const suggestions = document.getElementById('suggestions');
+    if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+      suggestions.classList.add("hidden");
+    }
+  });
+</script>
+
     <script src="{{ url_for('static', filename='js/Notes.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>

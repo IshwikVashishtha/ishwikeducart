@@ -1,4 +1,3 @@
-import random
 from bson import ObjectId
 import os
 from dotenv import load_dotenv
@@ -25,7 +24,7 @@ notes_collection = db['notes']
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
-app.config['ALLOWED_EXTENSIONS'] = {'pdf'}
+app.config['ALLOWED_EXTENSIONS'] = {'pdf' , 'doc'}
 
 # Flask-Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -50,8 +49,8 @@ login_manager.init_app(app)
 def send_verification_email(email):
     token = s.dumps(email, salt='email-confirm')
     confirm_url = url_for('confirm_email', token=token, _external=True)
-    subject = "Please confirm your email"
-    body = f'Click the link to confirm your email: {confirm_url}'
+    subject = "EMAIL VERIFICATION"
+    body = f'''Click the link to confirm your email and do not share it with anyone:{confirm_url}'''
 
     msg = Message(subject, recipients=[email], body=body)
     mail.send(msg)
@@ -60,10 +59,9 @@ def send_verification_email(email):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-
 def insert_note(subject, year, title, description, filename):
     notes_collection.insert_one({
-        "subject": subject,
+        "subject": subject.lower(),
         "year": f"{year} year",
         "title": title,
         "description": description,
@@ -71,19 +69,6 @@ def insert_note(subject, year, title, description, filename):
         "user_id": str(current_user.id),
         "created_at": datetime.utcnow()
     })
-
-
-def insert_user(email, password, username, bio="Tell about yourself", notes=None):
-    if notes is None:
-        notes = []
-    users_collection.insert_one({
-        "bio": bio,
-        "username": username,
-        "email": email,
-        "password": password,
-        "user_notes": notes
-    })
-
 
 def list_of_notes():
     return list(notes_collection.find())
@@ -140,12 +125,27 @@ def uploaded_file(filename):
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
 @login_required
 def userprofile(user_id):
-    requested_user = users_collection.find_one({"username": user_id})
-    if not requested_user:
+    user_data = users_collection.find_one({"username": user_id})
+    if not user_data:
         flash("User not found!", "danger")
         return redirect(url_for('index'))
 
-    user_notes = list(notes_collection.find({"user_id": str(requested_user['_id'])}))
+    user_notes = list(notes_collection.find({"user_id": str(user_data['_id'])}))
+    # Initialize default values if certain fields don't exist
+    user_profile = {
+        'username': user_data.get('username', ''),
+        'email': user_data.get('email', ''),
+        'points': user_data.get('points', 0),
+        'role': user_data.get('role', 'student'),
+        'badges': user_data.get('badges', []),
+        'followers': user_data.get('followers', []),
+        'following': user_data.get('following', []),
+        'profile_image': user_data.get('profile_image', 'default.jpg'),
+        'social_links': user_data.get('social_links', {}),
+        'achievements': user_data.get('achievements', []),
+        'bio': user_data.get('bio', 'No bio available'),
+        'created_on': user_data.get('created_on', datetime.now())
+    }
 
     if request.method == 'POST':
         new_username = request.form.get('username', '').strip()
@@ -173,26 +173,24 @@ def userprofile(user_id):
             return redirect(url_for('userprofile', user_id=redirect_user_id))
 
     return render_template("profile_page.html",
+                           user_profile= user_profile,
                            username=user_id,
-                           bio=requested_user.get('bio', ''),
+                           bio=user_data.get('bio', ''),
                            notes=user_notes,
                            user_id=user_id)
-
 
 @app.route('/')
 def index():
     return render_template("index.html")
 
-
+@login_required
 @app.route('/notes')
 def notes():
     return render_template("Notes.html", Notes=list_of_notes())
 
-
 @app.route('/resources')
 def resources():
     return render_template("resources.html")
-
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -220,7 +218,7 @@ def register():
 
             send_verification_email(user_email)
             flash('A confirmation email has been sent. Please check your inbox.', 'success')
-            return redirect(url_for('login'))
+            return redirect(url_for('login' , email=user_email))
     return render_template("register.html")
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -252,11 +250,10 @@ def logout():
     flash('You have been logged out.', 'success')
     return redirect(url_for("index"))
 
-
 @app.route('/confirm/<token>')
 def confirm_email(token):
     try:
-        email = s.loads(token, salt='email-confirm', max_age=300)
+        email = s.loads(token, salt='email-confirm', max_age=600) #Link expires in 10 min
         user = users_collection.find_one({'email': email})
         if user and not user.get('is_verified', False):
             users_collection.update_one({'email': email}, {'$set': {'is_verified': True}})
@@ -265,18 +262,40 @@ def confirm_email(token):
         flash("The confirmation link is invalid or has expired.", "danger")
     return redirect(url_for('login'))
 
-def re_send_mail():
-    return render_template('register.html')
+# @app.route('/resend_mail')
+# def re_send_mail():
+#     # First, try to get the email from the query parameter.
+#     email = request.args.get('email')
+#
+#     # If the user is logged in, use their email instead.
+#     if current_user.is_authenticated:
+#         email = current_user.email
+#
+#     if not email:
+#         flash('No email provided for verification.', 'danger')
+#         return redirect(url_for('login'))
+#
+#     user = users_collection.find_one({'email': email})
+#     if not user:
+#         flash('No user found with that email. Please register.', 'danger')
+#         return redirect(url_for('register'))
+#
+#     if user.get('is_verified', False):
+#         flash('Your email is already verified. Please log in.', 'info')
+#     else:
+#         send_verification_email(email)
+#         flash('A new confirmation email has been sent!', 'success')
+#
+#     return redirect(url_for('login'))
 
 @app.route('/filter_notes', methods=['GET'])
 def filter_notes():
     Notes = list_of_notes()
-    subject = request.args.get('subject')
-    year = request.args.get('year')
+    subject = request.args.get('subject').lower()
+    # year = request.args.get('year')
 
     filtered_notes = [note for note in Notes if
-                      (subject == "" or note['subject'] == subject) and
-                      (year == "" or note['year'] == year)]
+                      (subject == "" or note['subject'] == subject)]
 
     return render_template("notes.html", Notes=filtered_notes)
 
@@ -285,7 +304,5 @@ def delete(note_id):
     note_id = ObjectId(note_id)
     notes_collection.delete_one({"_id":note_id})
     return redirect(url_for("userprofile" , user_id= current_user.username))
-
-    pass
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True , port=5001)
