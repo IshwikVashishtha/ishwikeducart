@@ -299,10 +299,11 @@ def filter_notes():
 
     return render_template("notes.html", Notes=filtered_notes)
 
-@app.route('/delete/<note_id>')
-def delete(note_id):
-    note_id = ObjectId(note_id)
+@app.route('/delete' , methods=['POST'] )
+def delete():
+    note_id = ObjectId(str(request.form.get('note_id')))
     notes_collection.delete_one({"_id":note_id})
     return redirect(url_for("userprofile" , user_id= current_user.username))
+
 if __name__ == "__main__":
     app.run(debug=True , port=5001)
