@@ -124,7 +124,7 @@ def uploaded_file(filename):
 
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
 # @login_required
-def userprofile(user_id): # user_id is the user name of the user
+def userprofile(user_id): # user_id is the user_name of the user
     user_data = users_collection.find_one({"username": user_id})
     if not user_data:
         flash("User not found!", "danger")
@@ -215,7 +215,6 @@ def register():
                 'is_verified': False,
                 'bio': 'Tell about yourself',
                 'points': 0,
-                'role': 'student',
                 'badges': [],
                 'followers': [],
                 'following': [],
