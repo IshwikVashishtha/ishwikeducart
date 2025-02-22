@@ -55,7 +55,6 @@ def send_verification_email(email):
     msg = Message(subject, recipients=[email], body=body)
     mail.send(msg)
 
-
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
@@ -118,13 +117,14 @@ def upload_note():
 
 
 @app.route('/uploads/<filename>')
+@login_required
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
-@login_required
-def userprofile(user_id):
+# @login_required
+def userprofile(user_id): # user_id is the user name of the user
     user_data = users_collection.find_one({"username": user_id})
     if not user_data:
         flash("User not found!", "danger")
@@ -181,7 +181,9 @@ def userprofile(user_id):
 
 @app.route('/')
 def index():
-    return render_template("index.html")
+    users_list = [doc["username"] for doc in users_collection.find({}, {"username": 1, "_id": 0})]
+    # print(users_list)
+    return render_template("index.html" , users_names= users_list)
 
 @login_required
 @app.route('/notes')
@@ -212,8 +214,16 @@ def register():
                 'password': hashed_password,
                 'is_verified': False,
                 'bio': 'Tell about yourself',
-                'user_notes': [],
-                'created_at': datetime.utcnow()
+                'points': 0,
+                'role': 'student',
+                'badges': [],
+                'followers': [],
+                'following': [],
+                'profile_image': 'default.jpg',
+                'social_links': {},
+                'achievements': [],
+                'created_at': datetime.utcnow(),
+                'user_notes': []
             })
 
             send_verification_email(user_email)

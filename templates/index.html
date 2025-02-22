@@ -3,108 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <!-- Tailwind CSS -->
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-
-  <link
-      href="{{ url_for('static', filename='css/style.css') }}"
-      rel="stylesheet"
-    />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-p1CmLUT6ZQ+eNDVqz4+dxxhV8WKIW/6+7c+7NQ1zI9bLE9eLC+ymJdFcoKQQok2tmLzO+5nQ0a43PAXp4d9Kjw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <!-- Remix Icon for Instagram icon -->
+  <link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+  <!-- Custom CSS -->
+  <link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
   <title>Students Helping Page</title>
 </head>
-<body >
-<div class="container">
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
-      <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="/">Ishwik's EDUCART</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          Menu
-          <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto py-4 py-lg-0">
-            <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('index') }}"
-                >Home</a
-              >
-            </li>
+<body>
+  <div class="container">
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
+        <div class="container px-4 px-lg-5">
+          <a class="navbar-brand" href="/">Ishwik's EDUCART</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+            Menu
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto py-4 py-lg-0">
               <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('notes') }}"
-                >Notes</a
-              >
-            </li>
+                <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('index') }}">Home</a>
+              </li>
               <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('resources') }}"
-                >Resourse</a
-              >
-            </li>
-            {% if not current_user.is_authenticated: %}
+                <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('notes') }}">Notes</a>
+              </li>
               <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('login') }}"
-              >Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('register') }}"
-              >SignUp</a>
-            </li>
-            {% else: %}
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('logout') }}"
-              >Logout</a>
-            </li>
-             <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('userprofile' , user_id= current_user['username']) }}"
-              >User</a>
-            </li>
-            {% endif %}
-          </ul>
+                <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('resources') }}">Resource</a>
+              </li>
+              {% if not current_user.is_authenticated %}
+                <li class="nav-item">
+                  <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('login') }}">Login</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('register') }}">SignUp</a>
+                </li>
+              {% else %}
+                <li class="nav-item">
+                  <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('logout') }}">Logout</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link px-lg-3 py-3 py-lg-4" href="{{ url_for('userprofile', user_id=current_user.username) }}">User</a>
+                </li>
+              {% endif %}
+            </ul>
+          </div>
         </div>
+      </nav>
+    </header>
+    <main>
+      <div class="aktu">
+        <img src="https://static.vecteezy.com/system/resources/previews/024/905/052/non_2x/antique-bible-on-old-fashioned-table-selective-focus-generated-by-ai-free-photo.jpg" alt="">
       </div>
-    </nav>
-</header>
- <main>
-   <div class="aktu">
-     <img src="https://static.vecteezy.com/system/resources/previews/024/905/052/non_2x/antique-bible-on-old-fashioned-table-selective-focus-generated-by-ai-free-photo.jpg" alt="">
-   </div>
-   <div class="content">
-     <h1>Welcome to the Student Helping!</h1>
-     <p>Explore our comprehensive collection of meticulously crafted notes, extensive sets of previous year questions (PYQs), and a wealth of resources meticulously curated to empower you on your academic journey towards success</p>
-   </div>
- </main>
- </div>
- <footer>
-  <div class="footer-container">
-    <div class="footer-links">
-      <h5>If You Like this website then <br> you can support me <br> by following</h5>
-      <a href="https://www.instagram.com/ishwik_/">Instagram <i class="ri-instagram-line"></i></a>
-      <a href="ishwikvashishtha@example.com">Contact Us</a>
-      <a href="#about-us">About Us</a>
-    </div>
-    <div class="footer-about" id="about-us">
-      <p>Made by Ishwik Vashishtha</p>
-    </div>
+      <div class="content">
+        <h1>Welcome to the Student Helping!</h1>
+        <p>Explore our comprehensive collection of meticulously crafted notes, extensive sets of previous year questions (PYQs), and a wealth of resources meticulously curated to empower you on your academic journey towards success</p>
+      </div>
+      <div class="w-1/2 m-8 flex relative">
+        <form action="" method="post" class="flex md:flex-row w-full">
+          <input type="text" id="myInput" name="subject" onkeyup="filterSuggestions()" placeholder="Search for Educator..." title="Type in a subject" class="w-full rounded-full bg-gradient-to-r from-pink-500 via-blue-500 to-purple-500 border border-blue-700 mr-4 px-4 py-2 text-white placeholder-gray-300 focus:outline-none" />
+          <!-- Suggestion list: hidden by default -->
+          <ul id="suggestions" class="absolute left-0 right-0 mt-5 hidden list-none bg-black border border-gray-700 rounded-lg z-10">
+            {% for name in users_names %}
+              <li><a href="{{url_for('userprofile' , user_id =name)}}" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">{{ name }}</a></li>
+            {% endfor %}
+          </ul>
+          <button type="submit" id="apply-filter" class="px-6 py-2 rounded-full text-white bg-black hover:bg-[#332efb] transition-colors">
+            Search
+          </button>
+        </form>
+      </div>
+    </main>
   </div>
-</footer>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  <footer>
+    <div class="footer-container">
+      <div class="footer-links">
+        <h5>If You Like this website then <br> you can support me <br> by following</h5>
+        <a href="https://www.instagram.com/ishwik_/">Instagram <i class="ri-instagram-line"></i></a>
+        <a href="mailto:ishwikvashishtha@example.com">Contact Us</a>
+        <a href="#about-us">About Us</a>
+      </div>
+      <div class="footer-about" id="about-us">
+        <p>Made by Ishwik Vashishtha</p>
+      </div>
+    </div>
+  </footer>
+  <script>
+    function filterSuggestions() {
+      const input = document.getElementById('myInput');
+      const filter = input.value.toUpperCase();
+      const ul = document.getElementById('suggestions');
+      const li = ul.getElementsByTagName('li');
+      let hasVisible = false;
 
+      // If the input is empty, hide suggestions immediately.
+      if (filter === "") {
+        ul.classList.add("hidden");
+        return;
+      }
+
+      // Loop through each suggestion and display only matching items.
+      for (let i = 0; i < li.length; i++) {
+        const a = li[i].getElementsByTagName('a')[0];
+        const txtValue = a.textContent || a.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          li[i].classList.remove("hidden");
+          hasVisible = true;
+        } else {
+          li[i].classList.add("hidden");
+        }
+      }
+
+      // Show the suggestion list if there is at least one match.
+      if (hasVisible) {
+        ul.classList.remove("hidden");
+      } else {
+        ul.classList.add("hidden");
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 </body>
 </html>

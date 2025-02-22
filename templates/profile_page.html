@@ -59,7 +59,7 @@
     </div>
 
     <!-- Content Grid -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
     {% for note in notes %}
     <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 border border-gray-200">
         <h3 class="font-bold text-gray-900 mb-2">{{ note.title }}</h3>
@@ -94,9 +94,8 @@
     {% endfor %}
 </div>
 
-
-<!-- Delete Confirmation Message Box -->
-<div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="deleteModel">
+    <!-- Delete Confirmation Message Box -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="deleteModel">
     <div class="flex items-center justify-center min-h-screen">
         <div class="bg-white rounded-lg p-6 w-96">
             <h2 class="text-xl font-bold mb-4">DELETE</h2>
@@ -118,8 +117,8 @@
     </div>
 </div>
 
-        <!-- Upload Note Modal -->
-        <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="uploadNoteModal">
+    <!-- Upload Note Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="uploadNoteModal">
             <div class="flex items-center justify-center min-h-screen">
                 <div class="bg-white rounded-lg p-6 w-96">
                     <h2 class="text-xl font-bold mb-4">Upload Note</h2>
@@ -174,8 +173,9 @@
                 </div>
             </div>
         </div>
-    </div>
-<div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="editModal">
+
+    <!-- edit profile Modal -->
+    <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="editModal">
             <div class="flex items-center justify-center min-h-screen">
                 <div class="bg-white rounded-lg p-6 w-96">
                     <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
