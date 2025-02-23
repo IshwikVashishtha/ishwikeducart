@@ -1,5 +1,5 @@
-{% extends 'header.html'%}
-{% block title %}profile_page {% endblock %}
+{% extends 'header.html' %}
+{% block title %}profile_page{% endblock %}
 {% block content %}
 <!-- Main Container -->
 <div class="max-w-6xl mx-auto px-4 py-8 min-h-screen bg-gray-100 text-gray-800">
@@ -7,7 +7,8 @@
     <div class="flex flex-col md:flex-row items-center md:items-start gap-8 mb-8">
         <!-- Profile Picture -->
         <div class="relative group">
-            <img src="https://via.placeholder.com/150"
+            <!-- Use user_profile.profile_image if available -->
+            <img src="{{ url_for('static', filename='images/' ~ user_profile.profile_image) }}"
                  alt="Profile"
                  class="w-32 h-32 rounded-full border-4 border-blue-300 shadow-lg">
             <button class="absolute bottom-0 right-0 bg-blue-600 text-white p-2 rounded-full hover:bg-blue-700 transition">
@@ -18,16 +19,30 @@
         <!-- Profile Info -->
         <div class="flex-1">
             <div class="flex items-center gap-4 mb-4">
-                <h1 class="text-2xl font-bold text-gray-900">{{ username }}</h1>
-                {% if current_user.username == username%}
-                <button type="submit" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition"
-                        id="editProfileBtn">
-                    Edit Profile
-                </button>
-                <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
-                        id="uploadNoteBtn">
-                    Upload Note
-                </button>
+                <h1 class="text-2xl font-bold text-gray-900">{{ user_profile.username }}</h1>
+                {% if current_user.username == username %}
+                    <button type="button" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400 transition"
+                            id="editProfileBtn">
+                        Edit Profile
+                    </button>
+                    <button type="button" class="px-4 py-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition"
+                            id="uploadNoteBtn">
+                        Upload Note
+                    </button>
+                {% else %}
+                    {% if username in current_user.user_data['following'] %}
+                        <a href="{{ url_for('unfollow', username=username) }}"
+                           class="px-3 py-2 bg-blue-600 text-gray-100 rounded-full hover:bg-blue-900 transition"
+                           id="unfollowBtn">
+                            Unfollow
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('follow', username=username) }}"
+                           class="px-3 py-2 bg-blue-600 text-gray-100 rounded-full hover:bg-blue-900 transition"
+                           id="followBtn">
+                            Follow
+                        </a>
+                    {% endif %}
                 {% endif %}
             </div>
 
@@ -53,200 +68,211 @@
 
             <!-- Bio -->
             <p class="text-gray-700">
-                {{ bio }}
+                {{ user_profile.bio }}
             </p>
         </div>
     </div>
 
     <!-- Content Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-    {% for note in notes %}
-    <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 border border-gray-200">
-        <h3 class="font-bold text-gray-900 mb-2">{{ note.title }}</h3>
-        <p class="text-gray-700 text-sm mb-4">
-            {{ note.description }}
-        </p>
-        <div class="flex justify-between text-xs text-gray-600 font-bold">
-            <span>Subject: {{ note.subject | upper }}</span>
-            <span>Year: {{ note.year }}</span>
+        {% for note in notes %}
+        <div class="bg-white rounded-lg shadow-md hover:shadow-lg transition p-4 border border-gray-200">
+            <h3 class="font-bold text-gray-900 mb-2">{{ note.title }}</h3>
+            <p class="text-gray-700 text-sm mb-4">
+                {{ note.description }}
+            </p>
+            <div class="flex justify-between text-xs text-gray-600 font-bold">
+                <span>Subject: {{ note.subject | upper }}</span>
+                <span>Year: {{ note.year }}</span>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-2">
+                <span>Created: {{ note.created_at.strftime('%Y-%m-%d') if note.created_at else 'N/A' }}</span>
+                <div class="flex gap-2">
+                    {% if note.pdfLink %}
+                    <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
+                       class="px-3 py-2 bg-blue-600 text-gray-100 rounded-full hover:bg-blue-900 transition">
+                        <i class="fas fa-download">Download</i>
+                    </a>
+                    {% endif %}
+                    {% if current_user.id == note.user_id %}
+                        <button class="px-3 py-2 bg-red-600 text-gray-100 rounded-full hover:bg-red-900 transition delete-btn" data-note-id="{{ note._id }}">
+                            <i class="fas fa-trash"> Delete</i>
+                        </button>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-        <div class="flex justify-between text-xs text-gray-500 mt-2">
-            <span>Created: {{ note.created_at.strftime('%Y-%m-%d') if note.created_at else 'N/A' }}</span>
-            <div class="flex gap-2">
-                {% if note.pdfLink %}
-                <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
-                   class="text-blue-600 hover:text-blue-700">
-                    <i class="fas fa-download">Download</i>
-                </a>
-                {% endif %}
-                {% if current_user.id == note.user_id %}
-                    <button class="text-red-500 hover:text-red-600 delete-btn" data-note-id= '{{ note._id }}'>
-                        <i class="fas fa-trash"> Delete</i>
-                    </button>
-                {% endif %}
+        {% else %}
+        <div class="col-span-full text-center text-gray-500">
+            No notes found.
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Delete Confirmation Message Box -->
+    <div class="fixed inset-0 bg-black bg-opacity-70 hidden" id="deleteModel">
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-96">
+                <h2 class="text-xl font-bold mb-4">DELETE</h2>
+                <form action="{{ url_for('delete') }}" method="POST" id="deleteForm">
+                    <input type="hidden" name="note_id" id="noteIdInput">
+                    <div class="mb-4">
+                        <h2 class="block text-gray-700 mb-2">YOU ARE GOING TO DELETE THIS.</h2>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button" class="px-4 py-2 text-gray-500 rounded-full hover:text-gray-100 hover:bg-black" id="cancelDeleteBtn">
+                            Cancel
+                        </button>
+                        <button type="submit" class="px-3 py-2 bg-red-600 text-gray-100 rounded-full hover:bg-red-900 transition" id="confirmDeleteBtn">
+                            DELETE
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="col-span-full text-center text-gray-500">
-        No notes found.
-    </div>
-    {% endfor %}
-</div>
-
-    <!-- Delete Confirmation Message Box -->
-    <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="deleteModel">
-    <div class="flex items-center justify-center min-h-screen">
-        <div class="bg-white rounded-lg p-6 w-96">
-            <h2 class="text-xl font-bold mb-4">DELETE</h2>
-            <form action="{{url_for('delete')}}" method="POST" id="deleteForm">
-                <input type="hidden" name="note_id" id="noteIdInput">
-                <div class="mb-4">
-                    <h2 class="block text-gray-700 mb-2">YOU ARE GOING TO DELETE THIS.</h2>
-                </div>
-                <div class="flex justify-end gap-2">
-                    <button type="button" class="px-4 py-2 text-gray-500 hover:text-gray-700" id="cancelDeleteBtn">
-                        Cancel
-                    </button>
-                    <button type="submit" class="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600" id="confirmDeleteBtn">
-                        DELETE
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
 
     <!-- Upload Note Modal -->
     <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="uploadNoteModal">
-            <div class="flex items-center justify-center min-h-screen">
-                <div class="bg-white rounded-lg p-6 w-96">
-                    <h2 class="text-xl font-bold mb-4">Upload Note</h2>
-                    <form action="{{ url_for('upload_note') }}" method="POST" enctype="multipart/form-data">
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Title</label>
-                            <input type="text"
-                                   class="w-full px-3 py-2 border rounded-lg"
-                                   name="title"
-                                   required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Description</label>
-                            <textarea class="w-full px-3 py-2 border rounded-lg h-24"
-                                      name="description"
-                                      required></textarea>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Subject</label>
-                            <input type="text"
-                                   class="w-full px-3 py-2 border rounded-lg"
-                                   name="subject"
-                                   required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Year(write only number)</label>
-                            <input type="text"
-                                   class="w-full px-3 py-2 border rounded-lg"
-                                   name="year"
-                                   required>
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Upload PDF (only pdf)</label>
-                            <input type="file"
-                                   class="w-full px-3 py-2 border rounded-lg"
-                                   name="file"
-                                   accept="application/pdf"
-                                   required>
-                        </div>
-                        <div class="flex justify-end gap-2">
-                            <button type="button"
-                                    class="px-4 py-2 text-gray-500 hover:text-gray-700"
-                                    id="cancelUploadBtn">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                Upload
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-96">
+                <h2 class="text-xl font-bold mb-4">Upload Note</h2>
+                <form action="{{ url_for('upload_note') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Title</label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-lg"
+                               name="title"
+                               required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Description</label>
+                        <textarea class="w-full px-3 py-2 border rounded-lg h-24"
+                                  name="description"
+                                  required></textarea>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Subject</label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-lg"
+                               name="subject"
+                               required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Year (write only number)</label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-lg"
+                               name="year"
+                               required>
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Upload PDF (only pdf)</label>
+                        <input type="file"
+                               class="w-full px-3 py-2 border rounded-lg"
+                               name="file"
+                               accept="application/pdf"
+                               required>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button"
+                                class="px-4 py-2 text-gray-500 hover:text-gray-700"
+                                id="cancelUploadBtn">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            Upload
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
-    <!-- edit profile Modal -->
+    <!-- Edit Profile Modal -->
     <div class="fixed inset-0 bg-black bg-opacity-50 hidden" id="editModal">
-            <div class="flex items-center justify-center min-h-screen">
-                <div class="bg-white rounded-lg p-6 w-96">
-                    <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
-                    <form action="{{url_for('userprofile' , user_id =user_id)}}" method="POST">
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Username</label>
-                            <input type="text"
-                                   class="w-full px-3 py-2 border rounded-lg"
-                                   name="username"
-                                   value="{{ username }}">
-                        </div>
-                        <div class="mb-4">
-                            <label class="block text-gray-700 mb-2">Bio</label>
-                            <textarea class="w-full px-3 py-2 border rounded-lg h-24"
-                                      name="bio">{{ bio }}</textarea>
-                        </div>
-                        <div class="flex justify-end gap-2">
-                            <button type="button"
-                                    class="px-4 py-2 text-gray-500 hover:text-gray-700"
-                                    id="cancelEditBtn">
-                                Cancel
-                            </button>
-                            <button type="submit"
-                                    class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
-                                Save Changes
-                            </button>
-                        </div>
-                    </form>
-                </div>
+        <div class="flex items-center justify-center min-h-screen">
+            <div class="bg-white rounded-lg p-6 w-96">
+                <h2 class="text-xl font-bold mb-4">Edit Profile</h2>
+                <form action="{{ url_for('userprofile', user_id=user_id) }}" method="POST">
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Username</label>
+                        <input type="text"
+                               class="w-full px-3 py-2 border rounded-lg"
+                               name="username"
+                               value="{{ username }}">
+                    </div>
+                    <div class="mb-4">
+                        <label class="block text-gray-700 mb-2">Bio</label>
+                        <textarea class="w-full px-3 py-2 border rounded-lg h-24"
+                                  name="bio">{{ bio }}</textarea>
+                    </div>
+                    <div class="flex justify-end gap-2">
+                        <button type="button"
+                                class="px-4 py-2 text-gray-500 hover:text-gray-700"
+                                id="cancelEditBtn">
+                            Cancel
+                        </button>
+                        <button type="submit"
+                                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
             </div>
         </div>
+    </div>
 
+    <script>
+        // Modal handling
+        document.addEventListener('DOMContentLoaded', () => {
+            const editModal = document.getElementById('editModal');
+            const uploadNoteModal = document.getElementById('uploadNoteModal');
+            const deleteModel = document.getElementById('deleteModel');
 
-<script>
-    // Modal handling
-    const editModal = document.getElementById('editModal');
-    const uploadNoteModal = document.getElementById('uploadNoteModal');
-    const deleteButtons = document.querySelectorAll('.delete-btn');
-    const deleteModel = document.getElementById('deleteModel');
-    const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
-    const deleteForm = document.getElementById('deleteForm');
-    const noteIdInput = document.getElementById('noteIdInput');
+            const deleteButtons = document.querySelectorAll('.delete-btn');
+            const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
+            const noteIdInput = document.getElementById('noteIdInput');
 
-    deleteButtons.forEach(button => {
-        button.addEventListener('click', function () {
-            const noteId = this.getAttribute('data-note-id');
-<!--            deleteForm.action = `/delete/${noteId}`; -->
-<!--            deleteForm.action = {{url_for('delete' , note_id =noteId)}};-->
-            noteIdInput.value = noteId;
-            deleteModel.classList.remove('hidden');
+            const editProfileBtn = document.getElementById('editProfileBtn');
+            const uploadNoteBtn = document.getElementById('uploadNoteBtn');
+            const cancelEditBtn = document.getElementById('cancelEditBtn');
+            const cancelUploadBtn = document.getElementById('cancelUploadBtn');
+
+            // Handle delete button click
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const noteId = this.getAttribute('data-note-id');
+                    if (noteIdInput) noteIdInput.value = noteId;
+                    if (deleteModel) deleteModel.classList.remove('hidden');
+                });
+            });
+
+            // Handle cancel delete button
+            cancelDeleteBtn?.addEventListener('click', () => {
+                deleteModel?.classList.add('hidden');
+            });
+
+            // Handle cancel edit modal
+            cancelEditBtn?.addEventListener('click', () => {
+                editModal?.classList.add('hidden');
+            });
+
+            // Handle cancel upload modal
+            cancelUploadBtn?.addEventListener('click', () => {
+                uploadNoteModal?.classList.add('hidden');
+            });
+
+            // Show edit modal
+            editProfileBtn?.addEventListener('click', () => {
+                editModal?.classList.remove('hidden');
+            });
+
+            // Show upload note modal
+            uploadNoteBtn?.addEventListener('click', () => {
+                uploadNoteModal?.classList.remove('hidden');
+            });
         });
-    });
-    // Cancel button to hide the popup
-    cancelDeleteBtn.addEventListener('click', function () {
-        deleteModel.classList.add('hidden');
-    });
-
-    document.getElementById('cancelEditBtn').addEventListener('click' , () => {
-         editModal.classList.add('hidden')
-    })
-
-    document.getElementById('cancelUploadBtn').addEventListener('click' , () => {
-         uploadNoteModal.classList.add('hidden')
-    })
-
-    document.getElementById('editProfileBtn').addEventListener('click', () => {
-        editModal.classList.remove('hidden');
-    });
-
-    document.getElementById('uploadNoteBtn').addEventListener('click', () => {
-        uploadNoteModal.classList.remove('hidden');
-    });
-</script>
+    </script>
+</div>
 {% endblock %}

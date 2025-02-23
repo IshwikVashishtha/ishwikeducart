@@ -82,9 +82,8 @@ def load_user(id):
         return None
     return None
 
-
-@app.route('/upload_note', methods=['POST'])
 @login_required
+@app.route('/upload_note', methods=['POST'])
 def upload_note():
     if request.method == 'POST':
         title = request.form.get('title')
@@ -116,11 +115,10 @@ def upload_note():
         return redirect(url_for('userprofile', user_id=current_user.username))
 
 
-@app.route('/uploads/<filename>')
 @login_required
+@app.route('/uploads/<filename>')
 def uploaded_file(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
 
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
 # @login_required
@@ -175,9 +173,8 @@ def userprofile(user_id): # user_id is the user_name of the user
     return render_template("profile_page.html",
                            user_profile= user_profile,
                            username=user_id,
-                           bio=user_data.get('bio', ''),
                            notes=user_notes,
-                           user_id=user_id)
+                           user_id=user_id,)
 
 @app.route('/')
 def index():
@@ -296,6 +293,66 @@ def confirm_email(token):
 #         flash('A new confirmation email has been sent!', 'success')
 #
 #     return redirect(url_for('login'))
+@login_required
+@app.route('/follow/<username>')
+def follow(username):
+    if username == current_user.username:
+        flash("You cannot follow yourself.", "danger")
+        return redirect(url_for('userprofile', user_id=current_user.username))
+
+    user_to_follow = users_collection.find_one({"username": username})
+    if not user_to_follow:
+        flash("User not found.", "danger")
+        return redirect(url_for('index'))
+
+    # Check if already following (using current_user.user_data)
+    if username in current_user.user_data.get("following", []):
+        flash(f"Already following {username}.", "info")
+        return redirect(url_for('userprofile', user_id=username))
+
+    # Add username to current user's following list...
+    users_collection.update_one(
+        {"_id": ObjectId(current_user.id)},
+        {"$push": {"following": username}}
+    )
+    # ...and add current user's username to the other user's followers list.
+    users_collection.update_one(
+        {"_id": user_to_follow["_id"]},
+        {"$push": {"followers": current_user.username}}
+    )
+    flash(f"Now following {username}.", "success")
+    return redirect(url_for('userprofile', user_id=username))
+
+
+@login_required
+@app.route('/unfollow/<username>')
+def unfollow(username):
+    if username == current_user.username:
+        flash("You cannot unfollow yourself.", "danger")
+        return redirect(url_for('userprofile', user_id=current_user.username))
+
+    user_to_unfollow = users_collection.find_one({"username": username})
+    if not user_to_unfollow:
+        flash("User not found.", "danger")
+        return redirect(url_for('index'))
+
+    # Check if not following
+    if username not in current_user.user_data.get("following", []):
+        flash(f"You are not following {username}.", "info")
+        return redirect(url_for('userprofile', user_id=username))
+
+    # Remove username from current user's following list...
+    users_collection.update_one(
+        {"_id": ObjectId(current_user.id)},
+        {"$pull": {"following": username}}
+    )
+    # ...and remove current user's username from the other user's followers list.
+    users_collection.update_one(
+        {"_id": user_to_unfollow["_id"]},
+        {"$pull": {"followers": current_user.username}}
+    )
+    flash(f"Unfollowed {username}.", "success")
+    return redirect(url_for('userprofile', user_id=username))
 
 @app.route('/filter_notes', methods=['GET'])
 def filter_notes():
