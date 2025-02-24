@@ -10,6 +10,7 @@ from datetime import datetime
 from user import User
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail , Message
+from flask_socketio import SocketIO, send
 
 # Load environment variables
 load_dotenv()
@@ -34,6 +35,7 @@ app.config['MAIL_USERNAME'] = os.getenv("EMAIL")
 app.config['MAIL_PASSWORD'] = os.getenv("APP_PASSWORD")
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv("EMAIL")
 
+socketio = SocketIO(app)
 mail = Mail(app)
 s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
@@ -44,6 +46,11 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 # Flask-Login setup
 login_manager = LoginManager()
 login_manager.init_app(app)
+
+@socketio.on('chat')
+def handle_chat(chat):
+    socketio.emit('chat', chat)
+
 
 
 def send_verification_email(email):
@@ -176,6 +183,10 @@ def userprofile(user_id): # user_id is the user_name of the user
                            notes=user_notes,
                            user_id=user_id,)
 
+@app.route('/chat')
+def chat():
+    return render_template('chat.html')
+
 @app.route('/')
 def index():
     users_list = [doc["username"] for doc in users_collection.find({}, {"username": 1, "_id": 0})]
@@ -294,7 +305,7 @@ def confirm_email(token):
 #
 #     return redirect(url_for('login'))
 @login_required
-@app.route('/follow/<username>')
+@app.route('/follow/<username>') #this username belongs to the user whose profile we are searching
 def follow(username):
     if username == current_user.username:
         flash("You cannot follow yourself.", "danger")
@@ -323,9 +334,8 @@ def follow(username):
     flash(f"Now following {username}.", "success")
     return redirect(url_for('userprofile', user_id=username))
 
-
 @login_required
-@app.route('/unfollow/<username>')
+@app.route('/unfollow/<username>') #this username belongs to the user whose profile we are searching
 def unfollow(username):
     if username == current_user.username:
         flash("You cannot unfollow yourself.", "danger")

@@ -1,0 +1,105 @@
+{% extends "header.html" %}
+{% block title %}Chat{% endblock %}
+{% block head %}
+  <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
+          integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
+          crossorigin="anonymous"></script>
+  <style>
+    /* Styling for received messages: white background with thin black border */
+    .received {
+      background-color: white;
+      border: 1px solid black;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      align-self: flex-start;
+      margin-bottom: 0.5rem;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+    /* Styling for sent messages: same as send button style */
+    .sent {
+      background-color: #3B82F6; /* equivalent to bg-blue-500 */
+      color: white;
+      padding: 0.5rem;
+      border-radius: 0.5rem;
+      align-self: flex-end;
+      margin-bottom: 0.5rem;
+      max-width: 75%;
+      word-wrap: break-word;
+    }
+  </style>
+{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 h-screen flex flex-col">
+    <!-- Chat header -->
+    <div class="bg-blue-500 text-white p-1 rounded-t-lg flex items-center">
+        <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
+            <div>
+                <h2 class="text-lg font-semibold">Chat Name</h2>
+                <p class="text-sm text-gray-200">Online</p>
+            </div>
+        </div>
+    </div>
+    <!-- Conversation messages -->
+    <div id="conversation" class="flex flex-col flex-1 bg-blue-100 h-[80vh] gap-1 overflow-y-auto">
+        <!-- Chat messages will appear here -->
+    </div>
+    <!-- Input field and send button -->
+    <div class="bg-blue-100 flex items-center space-x-2 w-full left-0 pb-4">
+        <input type="text" placeholder="Type a message..."
+               class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-green-500"
+               id="messageInput">
+        <button id="sendButton" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-green-600">&gt;</button>
+    </div>
+</div>
+
+<script>
+  const socket = io();
+  let mySocketId = "";
+  const conversation = document.getElementById('conversation');
+  const messageInput = document.getElementById('messageInput');
+  const sendButton = document.getElementById('sendButton');
+
+  // Store our socket id on connection
+  socket.on('connect', () => {
+      mySocketId = socket.id;
+      const p = document.createElement('p');
+      p.innerText = "You are connected";
+      conversation.appendChild(p);
+      conversation.scrollTop = conversation.scrollHeight;
+  });
+
+  // Function to send message
+  function sendMessage() {
+      const message = messageInput.value.trim();
+      if (message !== "") {
+          // Emit an object containing the message and sender id
+          socket.emit("chat", { message: message, sender: mySocketId });
+          messageInput.value = "";
+      }
+  }
+
+  // Send message on Enter key press
+  messageInput.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+          sendMessage();
+      }
+  });
+
+  // Also send message when the send button is clicked
+  sendButton.addEventListener('click', sendMessage);
+
+  // Display incoming chat messages with conditional styling
+  socket.on('chat', (data) => {
+      const messageElement = document.createElement('p');
+      messageElement.innerText = data.message;
+
+      // Apply 'sent' style if this client sent the message, else 'received'
+      messageElement.className = data.sender === mySocketId ? "sent" : "received";
+
+      conversation.appendChild(messageElement);
+      conversation.scrollTop = conversation.scrollHeight;
+  });
+</script>
+{% endblock %}
