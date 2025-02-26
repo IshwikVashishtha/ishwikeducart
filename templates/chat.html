@@ -1,11 +1,11 @@
-{% extends "header.html" %}
+{% extends 'header.html' %}
 {% block title %}Chat{% endblock %}
 {% block head %}
   <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"
           integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO"
           crossorigin="anonymous"></script>
   <style>
-    /* Styling for received messages: white background with thin black border */
+    /* Styling for received messages: white background with a thin black border */
     .received {
       background-color: white;
       border: 1px solid black;
@@ -16,9 +16,9 @@
       max-width: 75%;
       word-wrap: break-word;
     }
-    /* Styling for sent messages: same as send button style */
+    /* Styling for sent messages: blue background with white text */
     .sent {
-      background-color: #3B82F6; /* equivalent to bg-blue-500 */
+      background-color: #3B82F6;
       color: white;
       padding: 0.5rem;
       border-radius: 0.5rem;
@@ -36,46 +36,47 @@
         <div class="flex items-center space-x-3">
             <div class="w-10 h-10 bg-gray-300 rounded-full"></div>
             <div>
-                <h2 class="text-lg font-semibold">Chat Name</h2>
-                <p class="text-sm text-gray-200">Online</p>
+                <h2 class="text-lg font-semibold">Chat with {{ target }}</h2>
+                <p class="text-sm text-gray-200">Private Message</p>
             </div>
         </div>
     </div>
     <!-- Conversation messages -->
-    <div id="conversation" class="flex flex-col flex-1 bg-blue-100 h-[80vh] gap-1 overflow-y-auto">
+    <div id="conversation" class="flex flex-col flex-1 bg-blue-100 h-[80vh] gap-1 overflow-y-auto p-4">
         <!-- Chat messages will appear here -->
     </div>
     <!-- Input field and send button -->
-    <div class="bg-blue-100 flex items-center space-x-2 w-full left-0 pb-4">
+    <div class="bg-blue-100 flex items-center space-x-2 w-full p-4">
         <input type="text" placeholder="Type a message..."
                class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring focus:border-green-500"
                id="messageInput">
-        <button id="sendButton" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-green-600">&gt;</button>
+        <button id="sendButton" class="bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600">&gt;</button>
     </div>
 </div>
 
 <script>
   const socket = io();
-  let mySocketId = "";
+  // Room and user info passed from server-side via template variables
+  const room = "{{ room }}";
+  const username = "{{ username }}";
   const conversation = document.getElementById('conversation');
   const messageInput = document.getElementById('messageInput');
   const sendButton = document.getElementById('sendButton');
 
-  // Store our socket id on connection
+  // On connection, join the private room
   socket.on('connect', () => {
-      mySocketId = socket.id;
+      socket.emit('join', { room: room, username: username });
       const p = document.createElement('p');
-      p.innerText = "You are connected";
+      p.innerText = "You are connected to room: " + room;
       conversation.appendChild(p);
       conversation.scrollTop = conversation.scrollHeight;
   });
 
-  // Function to send message
+  // Function to send a message
   function sendMessage() {
       const message = messageInput.value.trim();
       if (message !== "") {
-          // Emit an object containing the message and sender id
-          socket.emit("chat", { message: message, sender: mySocketId });
+          socket.emit("message", { message: message, sender: username, room: room });
           messageInput.value = "";
       }
   }
@@ -91,13 +92,20 @@
   sendButton.addEventListener('click', sendMessage);
 
   // Display incoming chat messages with conditional styling
+  socket.on('message', (data) => {
+      const messageElement = document.createElement('p');
+      messageElement.innerText = data.message;
+      // If the sender is the current user, style as sent (right); otherwise, style as received (left)
+      messageElement.className = data.sender === username ? "sent" : "received";
+      conversation.appendChild(messageElement);
+      conversation.scrollTop = conversation.scrollHeight;
+  });
+
+  // Optionally display join/leave notifications (if sent via the 'message' event)
   socket.on('chat', (data) => {
       const messageElement = document.createElement('p');
       messageElement.innerText = data.message;
-
-      // Apply 'sent' style if this client sent the message, else 'received'
-      messageElement.className = data.sender === mySocketId ? "sent" : "received";
-
+      messageElement.className = "received";
       conversation.appendChild(messageElement);
       conversation.scrollTop = conversation.scrollHeight;
   });

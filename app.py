@@ -1,3 +1,5 @@
+import base64
+from bson.binary import Binary
 from bson import ObjectId
 import os
 from dotenv import load_dotenv
@@ -10,7 +12,7 @@ from datetime import datetime
 from user import User
 from itsdangerous import URLSafeTimedSerializer
 from flask_mail import Mail , Message
-from flask_socketio import SocketIO, send
+from flask_socketio import SocketIO, join_room, emit
 
 # Load environment variables
 load_dotenv()
@@ -47,10 +49,23 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 login_manager = LoginManager()
 login_manager.init_app(app)
 
-@socketio.on('chat')
-def handle_chat(chat):
-    socketio.emit('chat', chat)
+def get_private_room(user1, user2):
+    """Unique room name for two users."""
+    return '-'.join(sorted([user1, user2]))
 
+@socketio.on('join')
+def on_join(data):
+    room = data['room']
+    username = data['username']
+    join_room(room)
+    # Inform the room that a new user has joined (optional)
+    emit('message', {'message': f'{username} has joined the chat.'}, room=room)
+
+@socketio.on('message')
+def handle_chat(data):
+    room = data['room']
+    # Broadcast the chat message to everyone in the room
+    emit('message', data, room=room)
 
 
 def send_verification_email(email):
@@ -129,14 +144,26 @@ def uploaded_file(filename):
 
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
 # @login_required
-def userprofile(user_id): # user_id is the user_name of the user
+def userprofile(user_id):
     user_data = users_collection.find_one({"username": user_id})
     if not user_data:
         flash("User not found!", "danger")
         return redirect(url_for('index'))
 
     user_notes = list(notes_collection.find({"user_id": str(user_data['_id'])}))
-    # Initialize default values if certain fields don't exist
+
+    # Process profile image for display:
+    stored_image = user_data.get('profile_image', 'default.jpg')
+    if isinstance(stored_image, dict) and 'data' in stored_image:
+        # Convert binary image data to a Base64 string and get its MIME type
+        profile_image_data = base64.b64encode(stored_image['data']).decode('utf-8')
+        image_content_type = stored_image.get('content_type', 'image/jpeg')
+    else:
+        # If not stored as binary, assume it's a filename for a static default image.
+        profile_image_data = None
+        image_content_type = None
+
+    # Build the user_profile dict and include these values
     user_profile = {
         'username': user_data.get('username', ''),
         'email': user_data.get('email', ''),
@@ -145,7 +172,10 @@ def userprofile(user_id): # user_id is the user_name of the user
         'badges': user_data.get('badges', []),
         'followers': user_data.get('followers', []),
         'following': user_data.get('following', []),
+        # We'll use these in the template to decide which image source to use
         'profile_image': user_data.get('profile_image', 'default.jpg'),
+        'profile_image_data': profile_image_data,
+        'image_content_type': image_content_type,
         'social_links': user_data.get('social_links', {}),
         'achievements': user_data.get('achievements', []),
         'bio': user_data.get('bio', 'No bio available'),
@@ -169,6 +199,17 @@ def userprofile(user_id): # user_id is the user_name of the user
         if new_bio:
             updates["bio"] = new_bio
 
+        # Handle the uploaded profile image
+        profile_image = request.files.get('profile_image')
+        if profile_image and profile_image.filename != '':
+            # Read the file's binary data
+            image_data = profile_image.read()
+            # Store both the binary data and the content type
+            updates["profile_image"] = {
+                "data": Binary(image_data),
+                "content_type": profile_image.content_type  # e.g., "image/png" or "image/jpeg"
+            }
+
         if updates:
             users_collection.update_one(
                 {"username": user_id},
@@ -178,14 +219,29 @@ def userprofile(user_id): # user_id is the user_name of the user
             return redirect(url_for('userprofile', user_id=redirect_user_id))
 
     return render_template("profile_page.html",
-                           user_profile= user_profile,
+                           user_profile=user_profile,
                            username=user_id,
                            notes=user_notes,
-                           user_id=user_id,)
+                           user_id=user_id)
 
 @app.route('/chat')
 def chat():
-    return render_template('chat.html')
+    """
+    Expect query parameters:
+      - username: current user's username (e.g. 'john')
+      - target: the username of the person being chatted with (e.g. 'chintu')
+    """
+    current_username = request.args.get('username')
+    target_username = request.args.get('target')
+    if not current_username or not target_username:
+        # You could redirect to an error page or home page if parameters are missing
+        return "Missing username or target", 400
+
+    room = get_private_room(current_username, target_username)
+    return render_template('chat.html',
+                           room=room,
+                           username=current_username,
+                           target=target_username)
 
 @app.route('/')
 def index():
