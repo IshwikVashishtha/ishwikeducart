@@ -1,9 +1,10 @@
 import base64
 from bson.binary import Binary
 from bson import ObjectId
+from gridfs import GridFS
 import os
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, redirect, url_for, flash, send_from_directory
+from flask import Flask, render_template, request, redirect, url_for, flash, make_response
 from flask_login import login_user, LoginManager, current_user, logout_user, login_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
@@ -23,7 +24,9 @@ client = MongoClient(connection_string)
 db = client['test']
 users_collection = db['users']
 notes_collection = db['notes']
-
+fs_files= db['fs.files']
+file_chunks = db['fs.chunks']
+fs = GridFS(db)
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY")
 app.config['UPLOAD_FOLDER'] = os.path.join(os.getcwd(), 'uploads')
@@ -67,12 +70,11 @@ def handle_chat(data):
     # Broadcast the chat message to everyone in the room
     emit('message', data, room=room)
 
-
 def send_verification_email(email):
     token = s.dumps(email, salt='email-confirm')
     confirm_url = url_for('confirm_email', token=token, _external=True)
     subject = "EMAIL VERIFICATION"
-    body = f'''Click the link to confirm your email and do not share it with anyone:{confirm_url}'''
+    body = f'''Click the link to confirm your email valid for 10 min only.:{confirm_url}'''
 
     msg = Message(subject, recipients=[email], body=body)
     mail.send(msg)
@@ -80,14 +82,20 @@ def send_verification_email(email):
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
 
-def insert_note(subject, year, title, description, filename):
+
+def insert_note(subject, year, title, description, file_content, original_filename):
+    # Store the file in GridFS and get the file_id
+    file_id = fs.put(file_content, filename=original_filename)
+
+    # Save the note with a reference to the file_id
     notes_collection.insert_one({
         "subject": subject.lower(),
         "year": f"{year} year",
         "title": title,
         "description": description,
-        "pdfLink": filename,
+        "file_id": file_id,  # Reference to the GridFS file
         "user_id": str(current_user.id),
+        "original_filename": original_filename,
         "created_at": datetime.utcnow()
     })
 
@@ -107,44 +115,61 @@ def load_user(id):
 @login_required
 @app.route('/upload_note', methods=['POST'])
 def upload_note():
-    if request.method == 'POST':
-        title = request.form.get('title')
-        description = request.form.get('description')
-        subject = request.form.get('subject')
-        year = request.form.get('year')
+    title = request.form.get('title')
+    description = request.form.get('description')
+    subject = request.form.get('subject')
+    year = request.form.get('year')
+    file = request.files.get('file')
 
-        if 'file' not in request.files:
-            flash('No file uploaded', 'danger')
-            return redirect(url_for('userprofile', user_id=current_user.username))
+    if not file or file.filename == '':
+        flash('No file uploaded', 'danger')
+        return redirect(url_for('home'))
 
-        file = request.files['file']
+    if allowed_file(file.filename):
+        original_filename = secure_filename(file.filename)
+        file_content = file.read()  # Read the file content
+        insert_note(subject, year, title, description, file_content, original_filename)
+        flash('File uploaded successfully!', 'success')
+    else:
+        flash('Allowed file types are PDF and DOC', 'danger')
+    return redirect(url_for('userprofile', user_id=current_user.username))
 
-        if file.filename == '':
-            flash('No selected file', 'danger')
-            return redirect(url_for('userprofile', user_id=current_user.username))
+@app.route('/download_note/<note_id>')
+def download_note(note_id):
+    try:
+        note = notes_collection.find_one({"_id": ObjectId(note_id)})
+        if note and 'file_id' in note:
+            file_id = note['file_id']
+            gridfs_file = fs.get(file_id)  # Retrieve the file from GridFS
+            file_content = gridfs_file.read()
+            original_filename = note['original_filename']
 
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            unique_filename = f"{current_user.id}{int(datetime.utcnow().timestamp())}_{filename}"
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], unique_filename)
-            file.save(file_path)
+            # Set the correct content type based on file extension
+            extension = original_filename.rsplit('.', 1)[1].lower()
+            if extension == 'pdf':
+                content_type = 'application/pdf'
+            elif extension == 'doc':
+                content_type = 'application/msword'
+            else:
+                content_type = 'application/octet-stream'
 
-            insert_note(subject, year, title, description, unique_filename)
-            flash('Note uploaded successfully!', 'success')
+            # Create a response for the file download
+            response = make_response(file_content)
+            response.headers['Content-Type'] = content_type
+            response.headers['Content-Disposition'] = f'attachment; filename="{original_filename}"'
+            return response
         else:
-            flash('Allowed file type is PDF only', 'danger')
-
-        return redirect(url_for('userprofile', user_id=current_user.username))
-
-
-@login_required
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
-
+            flash('Note not found', 'danger')
+            return redirect(url_for('Notes'))
+    except:
+        flash('Invalid note ID', 'danger')
+        return redirect(url_for('Notes'))
 @app.route('/profile_page/<user_id>', methods=['GET', 'POST'])
 # @login_required
 def userprofile(user_id):
+    if not user_id:
+        flash("LOGIN FIRST!")
+        return redirect(url_for('login'))
     user_data = users_collection.find_one({"username": user_id})
     if not user_data:
         flash("User not found!", "danger")
@@ -278,8 +303,6 @@ def register():
                 'password': hashed_password,
                 'is_verified': False,
                 'bio': 'Tell about yourself',
-                'points': 0,
-                'badges': [],
                 'followers': [],
                 'following': [],
                 'profile_image': 'default.jpg',
@@ -434,6 +457,10 @@ def filter_notes():
 @app.route('/delete' , methods=['POST'] )
 def delete():
     note_id = ObjectId(str(request.form.get('note_id')))
+    note = notes_collection.find_one({'_id': note_id})
+    file_id = note['file_id']
+    file_chunks.delete_many({"files_id": file_id})
+    fs_files.delete_one({"_id": file_id})
     notes_collection.delete_one({"_id":note_id})
     return redirect(url_for("userprofile" , user_id= current_user.username))
 

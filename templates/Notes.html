@@ -1,210 +1,114 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Engineering Notes</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link href="{{ url_for('static', filename='css/Notes.css') }}" rel="stylesheet">
-    <style>
-        .card:hover {
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            color: white;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-        .card-body:hover .card-title,
-        .card-body:hover .card-subtitle,
-        .card-body:hover .card-text,
-        .card-body:hover .btn {
-            color: white;
-        }
-    </style>
-</head>
-<body>
-    <img src="https://images.pexels.com/photos/207700/pexels-photo-207700.jpeg?cs=srgb&dl=pexels-pixabay-207700.jpg&fm=jpg" alt="">
-    <div class="container">
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark" id="mainNav">
-      <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="/">Ishwik's EDUCART</a>
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarResponsive"
-          aria-controls="navbarResponsive"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          Menu
-          <i class="fas fa-bars"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ms-auto py-4 py-lg-0">
-            <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('index') }}"
-                >Home</a
-              >
-            </li>
-              <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('notes') }}"
-                >Notes</a
-              >
-            </li>
-              <li class="nav-item">
-              <a
-                class="nav-link px-lg-3 py-3 py-lg-4"
-                href="{{ url_for('resources') }}"
-                >Resourse</a
-              >
-            </li>
-            {% if not current_user.is_authenticated: %}
-              <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('login') }}"
-              >Login</a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('register') }}"
-              >SignUp</a>
-            </li>
-            {% else: %}
-            <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('logout') }}"
-              >Logout</a>
-            </li>
-              <li class="nav-item">
-              <a class="nav-link px-lg-3 py-3 py-lg-4"
-                 href="{{ url_for('userprofile' , user_id= current_user['username']) }}"
-              >User</a>
-            </li>
-            {% endif %}
-          </ul>
-        </div>
-      </div>
-    </nav>
-        </header>
-        <h1 class="mt-4">Engineering Notes</h1>
-        <form action="{{ url_for('filter_notes') }}" method="GET" class="flex flex-col md:flex-row mt-7">
-         <!-- Search by Subject -->
-          <div class="relative md:w-1/2">
-            <input
-              type="text"
-              id="myInput"
-              name="subject"
-              onkeyup="filterSuggestions()"
-              placeholder="Search for subject..."
-              title="Type in a subject"
-              class="w-full rounded-full bg-transparent border border-blue-700 px-4 py-2 text-white placeholder-gray-300 focus:outline-none"
-            />
-            <!-- Suggestion list: hidden by default -->
-            <ul id="suggestions" class="absolute left-0 right-0 mt-1 hidden list-none bg-black border border-gray-700 rounded-lg z-10">
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Mathematics</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Physics</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Chemistry</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Programming for Problem Solving</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Electrical Engineering</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Electronic Engineering</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Environment and Ecology</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Mechanical Engineering</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Soft Skill</a></li>
-              <li><a href="#" class="block px-4 py-2 no-underline hover:bg-gray-700 rounded cursor-pointer">Data Structures</a></li>
-            </ul>
-          </div>
-          <!-- Submit Button -->
-          <button type="submit" id="apply-filter" class="px-6 py-2 rounded-full text-white bg-[#000000f2] hover:bg-[#332efb] transition-colors">
-            Apply Filter
-          </button>
+{% extends 'header.html' %}
+{% block title %}profile_page{% endblock %}
+{% block content %}
+<div class="text-white min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Main Heading -->
+        <h1 class="text-4xl font-bold text-center mt-8 mb-6">Engineering Notes</h1>
+
+        <!-- Search Form -->
+        <form action="{{ url_for('filter_notes') }}" method="GET" class="flex flex-col md:flex-row gap-4 mt-8 justify-center">
+            <div class="relative w-full md:w-1/2">
+                <input
+                    type="text"
+                    id="myInput"
+                    name="subject"
+                    onkeyup="filterSuggestions()"
+                    placeholder="Search for subject..."
+                    class="w-full rounded-full bg-gray-800 bg-opacity-50 border border-blue-500 px-5 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
+                />
+                <ul id="suggestions" class="absolute left-0 right-0 mt-2 hidden bg-gray-900 border border-gray-600 rounded-lg shadow-lg z-10 max-h-60 overflow-y-auto">
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Mathematics</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Physics</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Chemistry</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Programming for Problem Solving</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Electrical Engineering</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Electronic Engineering</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Environment and Ecology</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Mechanical Engineering</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Soft Skill</a></li>
+                    <li><a href="#" class="block px-4 py-2 text-white hover:bg-gray-700 rounded cursor-pointer">Data Structures</a></li>
+                </ul>
+            </div>
+            <button type="submit" class="px-6 py-3 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors font-semibold">
+                Search
+            </button>
         </form>
 
-
-        <div class="row mt-4">
+        <!-- Notes Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
             {% for note in Notes %}
-            <div class="col-lg-4 col-md-6 mb-4">
-                <div class="card bg-transparent rounded-5 border border-primary h-100 text-light">
-                    <div class="card-body">
-                        <h3 class="card-title">{{ note.subject | upper }}</h3>
-                        <h5 class="card-subtitle mb-2"><strong>Title:</strong>{{ note.title }}</h5>
-                        <h6 class="card-title"><strong>Year:</strong> {{ note.year }}</h6>
-                        <p class="card-text text-body-primary">{{ note.description }}</p>
-                        <!-- Download Button -->
-                        <a href="{{ url_for('uploaded_file', filename=note.pdfLink) }}"
-                           download="{{ note.title }}.pdf"
-                           class="inline-flex items-center px-6 py-2 rounded-full text-white bg-black bg-opacity-90 hover:bg-indigo-600 transition-colors">
-                          Download
-                          <svg class="w-8 h-8 ml-2 transition-transform transform hover:translate-x-1" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="37" cy="37" r="35.5" stroke="white" stroke-width="3"></circle>
-                            <path d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z" fill="black"></path>
-                          </svg>
-                        </a>
-                    </div>
+            <div class="bg-gray-800 bg-opacity-30 p-6 rounded-xl border border-gray-600 hover:bg-black/50 hover:text-white text-gray-200 transition-all duration-300 shadow-md flex flex-col justify-between">
+                <div>
+                    <h3 class="text-xl font-bold">{{ note.subject | upper }}</h3>
+                    <h5 class="text-lg font-semibold mt-2"><strong>Title:</strong> {{ note.title }}</h5>
+                    <h6 class="text-md font-medium mt-1"><strong>Year:</strong> {{ note.year }}</h6>
+                    <p class="mt-3">{{ note.description }}</p>
                 </div>
+                <a href="{{ url_for('download_note', note_id=note['_id']) }}"
+                   download="{{ note.title }}.pdf"
+                   class="inline-flex items-center px-6 py-3 rounded-full text-white bg-blue-600 hover:bg-blue-700 transition-colors mt-4 self-start">
+                    Download
+                    <svg class="w-6 h-6 ml-2 transition-transform transform hover:translate-x-1" viewBox="0 0 74 74" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="37" cy="37" r="35.5" stroke="white" stroke-width="3"></circle>
+                        <path d="M25 35.5C24.1716 35.5 23.5 36.1716 23.5 37C23.5 37.8284 24.1716 38.5 25 38.5V35.5ZM49.0607 38.0607C49.6464 37.4749 49.6464 36.5251 49.0607 35.9393L39.5147 26.3934C38.9289 25.8076 37.9792 25.8076 37.3934 26.3934C36.8076 26.9792 36.8076 27.9289 37.3934 28.5147L45.8787 37L37.3934 45.4853C36.8076 46.0711 36.8076 47.0208 37.3934 47.6066C37.9792 48.1924 38.9289 48.1924 39.5147 47.6066L49.0607 38.0607ZM25 38.5L48 38.5V35.5L25 35.5V38.5Z" fill="white"></path>
+                    </svg>
+                </a>
             </div>
             {% endfor %}
         </div>
-            </div>
- <script>
-  function filterSuggestions() {
-    const input = document.getElementById('myInput');
-    const filter = input.value.toUpperCase();
-    const ul = document.getElementById('suggestions');
-    const li = ul.getElementsByTagName('li');
-    let hasVisible = false;
+    </div>
 
-    // If the input is empty, hide suggestions immediately.
-    if (filter === "") {
-      ul.classList.add("hidden");
-      return;
-    }
+    <!-- JavaScript -->
+    <script>
+        // Filter suggestions for search input
+        function filterSuggestions() {
+            const input = document.getElementById('myInput');
+            const filter = input.value.toUpperCase();
+            const ul = document.getElementById('suggestions');
+            const li = ul.getElementsByTagName('li');
+            let hasVisible = false;
 
-    // Loop through each suggestion and display only matching items.
-    for (let i = 0; i < li.length; i++) {
-      const a = li[i].getElementsByTagName('a')[0];
-      const txtValue = a.textContent || a.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        li[i].classList.remove("hidden");
-        hasVisible = true;
-      } else {
-        li[i].classList.add("hidden");
-      }
-    }
+            if (filter === "") {
+                ul.classList.add("hidden");
+                return;
+            }
 
-    // Show the suggestion list if there is at least one match.
-    if (hasVisible) {
-      ul.classList.remove("hidden");
-    } else {
-      ul.classList.add("hidden");
-    }
-  }
+            for (let i = 0; i < li.length; i++) {
+                const a = li[i].getElementsByTagName('a')[0];
+                const txtValue = a.textContent || a.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    li[i].classList.remove("hidden");
+                    hasVisible = true;
+                } else {
+                    li[i].classList.add("hidden");
+                }
+            }
 
-  // Use event delegation to handle suggestion clicks.
-  document.getElementById('suggestions').addEventListener('click', function(e) {
-    if (e.target && e.target.nodeName === "A") {
-      e.preventDefault();  // Prevent the default anchor action.
-      document.getElementById('myInput').value = e.target.textContent;
-      document.getElementById('suggestions').classList.add("hidden");
-    }
-  });
+            ul.classList.toggle("hidden", !hasVisible);
+        }
 
-  // Optionally, hide suggestions when clicking outside the input or suggestion list.
-  document.addEventListener('click', function(e) {
-    const input = document.getElementById('myInput');
-    const suggestions = document.getElementById('suggestions');
-    if (!input.contains(e.target) && !suggestions.contains(e.target)) {
-      suggestions.classList.add("hidden");
-    }
-  });
-</script>
+        // Handle suggestion clicks
+        document.getElementById('suggestions').addEventListener('click', function(e) {
+            const target = e.target;
+            if (target.tagName === 'A') {
+                e.preventDefault();
+                const input = document.getElementById('myInput');
+                input.value = target.textContent;  // Set the input value to the clicked suggestion
+                document.getElementById('suggestions').classList.add("hidden");
+                // Optionally submit the form automatically after selection
+                input.form.submit();
+            }
+        });
 
-    <script src="{{ url_for('static', filename='js/Notes.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
-</body>
-</html>
+        // Hide suggestions when clicking outside
+        document.addEventListener('click', function(e) {
+            const input = document.getElementById('myInput');
+            const suggestions = document.getElementById('suggestions');
+            if (!input.contains(e.target) && !suggestions.contains(e.target)) {
+                suggestions.classList.add("hidden");
+            }
+        });
+    </script>
+</div>
+{% endblock %}
