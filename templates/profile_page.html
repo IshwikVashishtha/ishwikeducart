@@ -35,17 +35,24 @@
                         Upload Note
                     </button>
                 {% else %}
-                    {% if username in current_user.user_data['following'] %}
+                    {# Anyone can search and view profile info above this block #}
+                    {% if current_user.is_authenticated and username in current_user.user_data['following'] %}
                         <a href="{{ url_for('unfollow', username=username) }}"
                            class="px-3 py-2 bg-blue-600 text-gray-100 rounded-full hover:bg-blue-900 transition"
                            id="unfollowBtn">
                             Unfollow
                         </a>
-                    {% else %}
+                    {% elif current_user.is_authenticated %}
                         <a href="{{ url_for('follow', username=username) }}"
                            class="px-3 py-2 bg-blue-600 text-gray-100 rounded-full hover:bg-blue-900 transition"
                            id="followBtn">
                             Follow
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}"
+                           class="px-3 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-700 transition"
+                           id="loginPromptBtn">
+                            Login to Follow
                         </a>
                     {% endif %}
                          <a href="{{ url_for('chat', username=current_user.username, target=user_profile.username)}}"

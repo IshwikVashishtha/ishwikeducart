@@ -271,7 +271,7 @@ def chat():
 @app.route('/')
 def index():
     users_list = [doc["username"] for doc in users_collection.find({}, {"username": 1, "_id": 0})]
-    # print(users_list)
+    print(users_list)
     return render_template("index.html" , users_names= users_list)
 
 @login_required
@@ -340,6 +340,7 @@ def login():
             flash('Invalid email or password.', 'danger')
     return render_template("login.html")
 
+@login_required
 @app.route('/logout')
 def logout():
     logout_user()
@@ -453,7 +454,7 @@ def filter_notes():
                       (subject == "" or note['subject'] == subject)]
 
     return render_template("notes.html", Notes=filtered_notes)
-
+@login_required
 @app.route('/delete' , methods=['POST'] )
 def delete():
     note_id = ObjectId(str(request.form.get('note_id')))
