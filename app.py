@@ -19,6 +19,7 @@ from flask_socketio import SocketIO, join_room, emit
 load_dotenv()
 connection_string = os.getenv("CONNECTION_STRING")
 client = MongoClient(connection_string)
+Secret_Key = os.getenv("SECRET_KEY" , "a9f5c3d2e1a4b7c6f9d8e7a6b5c4d3e2a1")
 
 # Access the database and collections
 db = client['test']
@@ -42,7 +43,7 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv("EMAIL")
 
 socketio = SocketIO(app)
 mail = Mail(app)
-s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+s = URLSafeTimedSerializer(Secret_Key)
 
 # Create uploads directory if not exists
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
@@ -271,7 +272,7 @@ def chat():
 @app.route('/')
 def index():
     users_list = [doc["username"] for doc in users_collection.find({}, {"username": 1, "_id": 0})]
-    print(users_list)
+    # print(users_list)
     return render_template("index.html" , users_names= users_list)
 
 @login_required
@@ -466,4 +467,4 @@ def delete():
     return redirect(url_for("userprofile" , user_id= current_user.username))
 
 if __name__ == "__main__":
-    app.run(debug=True , port=5001)
+    app.run(port=5001)
