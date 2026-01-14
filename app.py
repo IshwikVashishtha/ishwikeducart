@@ -454,7 +454,7 @@ def filter_notes():
     filtered_notes = [note for note in Notes if
                       (subject == "" or note['subject'] == subject)]
 
-    return render_template("notes.html", Notes=filtered_notes)
+    return render_template("Notes.html", Notes=filtered_notes)
 @login_required
 @app.route('/delete' , methods=['POST'] )
 def delete():
@@ -467,4 +467,4 @@ def delete():
     return redirect(url_for("userprofile" , user_id= current_user.username))
 
 if __name__ == "__main__":
-    app.run(port=5001)
+    socketio.run(app, port=5001, debug=True)
